@@ -1,0 +1,124 @@
+{
+  "id": "video-01",
+  "title": "Desarmé draw.io con IA gratis",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "max_duration_s": 60,
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "pixel_format": "yuv420p",
+    "target_lufs": -14,
+    "safe_zone_pct": 0.85
+  },
+  "source": {
+    "target": "draw.io Desktop 32.4.1",
+    "evidence": "oferta/informe-muestra.md",
+    "disclaimer": "cifras reales del informe; ningun numero inventado"
+  },
+  "voice": {
+    "lang": "es",
+    "engine": "edge-tts",
+    "voice_id": "es-ES-ElviraNeural",
+    "rate": "+0%",
+    "candidates_smoke": ["es-ES-ElviraNeural", "es-ES-AlvaroNeural"]
+  },
+  "music": {
+    "engine": "ace-step",
+    "genre_prompt": "dark cinematic cyber electronic, subtle pulse, atmospheric pads, no vocals",
+    "duration_s": 60,
+    "duck_db": -8,
+    "fallback": "silence"
+  },
+  "subtitles": {
+    "language": "en",
+    "mode": "karaoke",
+    "format": "ass",
+    "font": "DejaVu Sans",
+    "margin_v_pct": 0.08
+  },
+  "segments": [
+    {
+      "id": "hook",
+      "t_start": 0,
+      "t_end": 4,
+      "voice_es": "Desarmé draw.io con IA gratis. Encontré 35 puertas traseras entre procesos.",
+      "sub_en": "I took draw.io apart with free AI. I found 35 back-doors between processes.",
+      "clip": "A",
+      "overlay": [
+        { "text": "35 puertas IPC", "style": "kinetic", "size": "lg", "y": 0.30 }
+      ]
+    },
+    {
+      "id": "objetivo",
+      "t_start": 4,
+      "t_end": 12,
+      "voice_es": "draw.io Desktop 32.4.1. Lo descargué, verifiqué su hash contra el oficial, y lo audité en la nube sin gastar un euro.",
+      "sub_en": "draw.io Desktop 32.4.1. I downloaded it, verified its hash, and audited it in the cloud for zero euros.",
+      "clip": "B",
+      "overlay": [
+        { "text": "draw.io 32.4.1", "style": "typewriter", "size": "md", "y": 0.26 },
+        { "text": "hash f4455b3b… OK", "style": "mono", "size": "sm", "y": 0.36 }
+      ]
+    },
+    {
+      "id": "proceso",
+      "t_start": 12,
+      "t_end": 30,
+      "voice_es": "Recorrí 1.292 ficheros y 34 megas de código. 3.267.398 nodos de código. 3.246 hallazgos. Cero errores de parseo. Todo con huella criptográfica.",
+      "sub_en": "I went through 1,292 files and 34 MB of code. 3,267,398 AST nodes. 3,246 findings. Zero parse errors. Every result cryptographically stamped.",
+      "clip": "C",
+      "overlay": [
+        { "text": "1.292 ficheros", "style": "counter", "size": "md", "y": 0.28 },
+        { "text": "3.267.398 nodos AST", "style": "counter", "size": "md", "y": 0.36 },
+        { "text": "3.246 hallazgos", "style": "counter", "size": "lg", "y": 0.44 },
+        { "text": "ev_f0e4202c…", "style": "mono", "size": "xs", "y": 0.86 }
+      ]
+    },
+    {
+      "id": "hallazgo",
+      "t_start": 30,
+      "t_end": 44,
+      "voice_es": "28 canales de comunicación entre procesos. 5 ventanas. La buena noticia: 5 vulnerabilidades cruzadas, 0 activas. La higiene es buena.",
+      "sub_en": "28 IPC channels. 5 windows. Good news: 5 cross-checked CVEs, 0 active. The hygiene is good.",
+      "clip": "D",
+      "overlay": [
+        { "text": "28 canales IPC", "style": "kinetic", "size": "md", "y": 0.28 },
+        { "text": "5 CVEs → 0 activos", "style": "kinetic", "size": "lg", "y": 0.40 }
+      ]
+    },
+    {
+      "id": "limites",
+      "t_start": 44,
+      "t_end": 53,
+      "voice_es": "Y esto es lo que no verás en otros informes: REA declara qué NO pudo saber. 7 límites, con su evidencia.",
+      "sub_en": "And this is what you won't see in other reports: REA declares what it could NOT determine. 7 limitations, each with its evidence.",
+      "clip": "E",
+      "overlay": [
+        { "text": "7 límites declarados", "style": "kinetic", "size": "lg", "y": 0.32 },
+        { "text": "limitations", "style": "mono", "size": "sm", "y": 0.42 }
+      ]
+    },
+    {
+      "id": "cta",
+      "t_start": 53,
+      "t_end": 58,
+      "voice_es": "¿Software de escritorio? Te audito el tuyo con la misma evidencia. Link en la bio.",
+      "sub_en": "Desktop software? I'll audit yours with the same evidence. Link in bio.",
+      "clip": "ENDCARD",
+      "overlay": [
+        { "text": "AUDITORÍA CON EVIDENCIA", "style": "endcard", "size": "lg", "y": 0.40 },
+        { "text": "evidence_id · limitations", "style": "mono", "size": "xs", "y": 0.50 }
+      ]
+    }
+  ],
+  "clips": {
+    "A": { "seed": 42,   "prompt": "dark abstract cybersecurity visual, glowing teal and magenta circuit pathways converging, floating hexagonal nodes, volumetric fog, cinematic rim light, ultra detailed, moody, no text, no letters" },
+    "B": { "seed": 1337, "prompt": "vast dark server room, rows of racks with tiny blue and magenta LEDs, slow dolly forward, atmospheric haze, cold cinematic lighting, high detail, no text, no letters" },
+    "C": { "seed": 777,  "prompt": "extreme macro of a silicon microchip, teal and magenta light tracing the die pathways, shallow depth of field, bokeh, cinematic, hyperdetailed, no text, no letters" },
+    "D": { "seed": 2024, "prompt": "abstract network of glowing nodes connected by arcing teal lines on a dark void, data flowing as light pulses, slow rotation, cinematic, no text, no letters" },
+    "E": { "seed": 9001, "prompt": "a translucent holographic document floating in dark space, scanning laser line sweeping across it, magenta and teal edge glow, cinematic, mysterious, no text, no letters" },
+    "ENDCARD": { "type": "static", "bg": "#05060a", "note": "end-card generada con ffmpeg drawtext, sin IA" }
+  }
+}
