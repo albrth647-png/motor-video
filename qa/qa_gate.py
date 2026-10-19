@@ -4,7 +4,7 @@ QA-gate bloqueante (SPEC-MOTOR-VIDEO.md §7 / R6).
 Si CUALQUIER check falla -> exit 1 -> el workflow NO sube el mp4 a Artifacts.
 Checks: resolución · fps · duración · codec · pixel format · LUFS · streams · faststart.
 
-Uso:  python3 qa/qa_gate.py build/video-01.mp4
+Uso:  python3 qa/qa_gate.py build/video-01.mp4 [duracion_esperada_s]
 """
 import json
 import re
@@ -12,6 +12,7 @@ import subprocess
 import sys
 
 MAX_DUR = 60
+MIN_DUR = 20  # piso anti-truncado (short congelado v8 = 49,07 s; SPEC v1.2)
 LUFS_TARGET = -14
 LUFS_TOL = 1.0
 W, H, FPS = 1080, 1920, 30
@@ -46,9 +47,10 @@ def moov_first(path):
 
 
 def main():
-    if len(sys.argv) != 2:
-        raise SystemExit("uso: qa_gate.py <mp4>")
+    if len(sys.argv) not in (2, 3):
+        raise SystemExit("uso: qa_gate.py <mp4> [duracion_esperada_s]")
     path = sys.argv[1]
+    expected = float(sys.argv[2]) if len(sys.argv) > 2 else None
     p = probe(path)
     errors = []
 
@@ -84,8 +86,10 @@ def main():
         errors.append("duración ilegible")
     elif dur > MAX_DUR:
         errors.append(f"duración {dur:.1f}s > {MAX_DUR}s")
-    elif dur < 45:
-        errors.append(f"duración {dur:.1f}s < 45s (video incompleto)")
+    elif dur < MIN_DUR:
+        errors.append(f"duración {dur:.1f}s < {MIN_DUR}s (video incompleto)")
+    if expected is not None and abs(dur - expected) > 2.0:
+        errors.append(f"duración {dur:.1f}s != esperada {expected:.1f}±2s")
 
     lufs = measure_lufs(path)
     if lufs is None:

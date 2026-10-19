@@ -1,60 +1,50 @@
-# GUION — Vídeo #1 (muestra de estilo · video-cero)
+# GUION — Vídeo #1 «Desarmé draw.io con IA gratis»
 
-> Formato: **Short vertical 1080×1920 · ≤60 s · faceless · ES voz + subs EN karaoke**
+> **Short vertical 1080×1920 · 30 fps · 49,068 s · faceless · voz ES + subs EN karaoke** · la imagen manda.
 > Fuente de datos: **real** — `oferta/informe-muestra.md` (draw.io Desktop 32.4.1). **Cero cifras inventadas.**
-> Plantilla: PLAN.md §10.5 (hook → objetivo → proceso → hallazgo → límites → CTA)
-> Tema: §4.3 #1 (miedo→click) + #3 (prueba). Estilo §4.2 A+C (investigación + typewriter).
-> Motor: SPEC-MOTOR-VIDEO.md v1.1. **Este vídeo NO se publica** — es para aprobación del operador.
+> Plantilla: PLAN.md §10.5 (hook → objetivo → proceso → hallazgo → límites → CTA) — adaptada a la narrativa de **8 frases** del corte final.
+> **Estado: CONGELADO v8** — veredicto del operador (2026-10-19): «v8 perfecta» = **100 %** → receta congelada en `SPEC-MOTOR-VIDEO.md` **v1.2** (D-VM-09).
+> Fuente de verdad técnica: `build_nb.py` (genera `kernel.ipynb` / `render.ipynb`). Bitácora: `ITERACIONES.md`.
 
 ---
 
-## Línea temporal (voz ES · ~58 s)
+## Línea temporal — 8 frases (voz real: 47,57 s · total con cola: 49,068 s)
 
-| T | Bloque | Voz (ES) | Subs (EN) | Visual (clip AI + tipografía) |
+| Frase | t (s) | Voz (ES · Tomás −12 %) | Subs (EN karaoke) | Visual (`shotNN`) |
 |---|---|---|---|---|
-| **0-4s** | **HOOK** | "Desarmé draw.io con IA gratis. Encontré 35 puertas traseras entre procesos." | *"I took draw.io apart with free AI. I found 35 back-doors between processes."* | Clip A (cyber B-roll) + tipografía kinetic: **35 puertas IPC** |
-| **4-12s** | **OBJETIVO** | "draw.io Desktop 32.4.1. Lo descargué, verifiqué su hash contra el oficial, y lo audité en la nube sin gastar un euro." | *"draw.io Desktop 32.4.1. I downloaded it, verified its hash, and audited it in the cloud for zero euros."* | Clip B (server room) + tipografía typewriter: hash `f4455b3b…` ✅ |
-| **12-30s** | **PROCESO** | "Recorrí 1.292 ficheros y 34 megas de código. 3.267.398 nodos de código. 3.246 hallazgos. Cero errores de parseo. Todo con huella criptográfica." | *"I went through 1,292 files and 34 MB of code. 3,267,398 AST nodes. 3,246 findings. Zero parse errors. Every result cryptographically stamped."* | Clip C (chip macro) + contador kinetic: 1.292 → 3.267.398 → 3.246 |
-| **30-44s** | **HALLAZGO** | "28 canales de comunicación entre procesos. 5 ventanas. La buena noticia: 5 vulnerabilidades cruzadas, 0 activas. La higiene es buena." | *"28 IPC channels. 5 windows. Good news: 5 cross-checked CVEs, 0 active. The hygiene is good."* | Clip D (data nodes) + tipografía: **28 canales · 5 CVEs → 0 activos** |
-| **44-53s** | **LÍMITES** | "Y esto es lo que no verás en otros informes: REA declara qué NO pudo saber. 7 límites, con su evidencia." | *"And this is what you won't see in other reports: REA declares what it could NOT determine. 7 limitations, each with its evidence."* | Clip E (hologram doc) + tipografía: **7 límites declarados** + `limitations` |
-| **53-58s** | **CTA** | "¿Software de escritorio? Te audito el tuyo con la misma evidencia. Link en la bio." | *"Desktop software? I'll audit yours with the same evidence. Link in bio."* | End-card estático: logo + "AUDITORÍA CON EVIDENCIA" + flecha ↗ |
+| F0 | 0,10 – 4,91 | REA expert services. Auditoria real, con evidencia. | REA expert services. A real audit, with evidence. | `shot19` + **tarjeta intro** (ASS) |
+| F1 | 5,98 – 8,91 | Descubri una falla de seguridad en draw.io. | I found a security flaw in draw.io | `shot01` candado roto · `shot12` grieta |
+| F2 | 9,99 – 14,56 | Y lo peor es que afecta a la version 32.4.1, la actual. | And the worst part it affects version 32.4.1 the current one | `shot02` laptop roja · `shot13` versiones |
+| F3 | 15,60 – 20,36 | En mi auditoria encontre que el modo de incognito no aisla las sesiones como deberia. | In my audit I found incognito mode doesn't isolate sessions like it should | `shot14` lupa · `shot03` escudo · `shot04` máscara · `shot05` ventanas |
+| F4 | 21,41 – 26,69 | Un atacante podria rastrear los diagramas que abres incluso cuando crees que estas protegido. | An attacker could track the diagrams you open even when you think you're protected | `shot06` atacante · `shot15` rastro · `shot07` ojo |
+| F5 | 27,74 – 28,76 | Pero hay solucion. | But there's a fix | `shot08` bóveda |
+| F6 | 29,82 – 35,67 | Con tres ajustes de configuracion podes cerrar esa puerta y dejar tu draw.io realmente seguro. | Three config tweaks close that door and keep your draw.io truly secure | `shot09` 3 ajustes · `shot16` candado verde · `shot10` laptop · `shot17` cubo |
+| F7 | 36,70 – 46,46 | En la parte dos te muestro los tres ajustes. ¿Tu app es Electron? Te la audito con esta misma evidencia. Link en la bio. | Part two shows the three tweaks. Building an Electron app? I'll audit yours with this same evidence. Link in bio. | `shot18` play · `shot11` fondo CTA · `shot20` **endcard** |
+
+- La pausa entre frases la sostiene el último plano de la frase anterior; la imagen nueva entra EXACTAMENTE con la primera palabra de su frase (sincronía imagen↔voz).
+- **TOTAL = 49,068 s** = voz 47,57 s + cola (**TAIL**) 1,5 s para que respire la música y funda el cierre.
 
 ---
 
-## Elementos no-narrados (pantalla)
+## Tarjetas (tipografía real ASS — D-VM-04)
 
-- **`evidence_id`** visible al menos 1 vez: `ev_f0e4202c…` (diferenciador §10.5).
-- **Zona segura**: texto dentro del 85% central (spec §4.3). Nada en los 150px superiores/inferiores.
-- **Subs EN**: karaoke palabra-a-palabra (ASS, `\\k`), dentro de zona segura, sin tapar tipografía principal.
-
----
-
-## Prompts de clips AI (semillas fijas · estética cyber/código · SIN texto en encuadre)
-
-> Regla §4.2: **NO** stock genérico de Pexels. Semillas fijas para reproducibilidad (spec §4.3).
-
-| Clip | Secuencia | Prompt (EN, para Wan) | Seed | Dur |
-|---|---|---|---|---|
-| **A** | HOOK | `dark abstract cybersecurity visual, glowing teal and magenta circuit pathways converging, floating hexagonal nodes, volumetric fog, cinematic rim light, ultra detailed, moody, no text, no letters` | 42 | 4s |
-| **B** | OBJETIVO | `vast dark server room, rows of racks with tiny blue and magenta LEDs, slow dolly forward, atmospheric haze, cold cinematic lighting, high detail, no text, no letters` | 1337 | 8s |
-| **C** | PROCESO | `extreme macro of a silicon microchip, teal and magenta light tracing the die pathways, shallow depth of field, bokeh, cinematic, hyperdetailed, no text, no letters` | 777 | 18s |
-| **D** | HALLAZGO | `abstract network of glowing nodes connected by arcing teal lines on a dark void, data flowing as light pulses, slow rotation, cinematic, no text, no letters` | 2024 | 14s |
-| **E** | LÍMITES | `a translucent holographic document floating in dark space, scanning laser line sweeping across it, magenta and teal edge glow, cinematic, mysterious, no text, no letters` | 9001 | 9s |
-
-> **Nota**: los clips se generan en **480p** (Wan-5B en A10) y se **upscalean a 1080×1920** en el ensamblado (spec §4.3, ahorra GPU). La duración de cada clip se estira/recorta con `tpad`+`trim` en ffmpeg para cuadrar la línea temporal; las cifras reales de fps/coste se miden en el smoke test (§8).
-
----
+- **Intro** (sobre `shot19`, ~0,25–5,21 s): `REA EXPERT SERVICES` · subrayado turquesa · `AUDITORÍA REAL` · `draw.io Desktop 32.4.1` · `con evidencia verificable`.
+- **Endcard** (sobre `shot20`, desde ~42,6 s): `REA EXPERT SERVICES` · `¿TU APP ES ELECTRON?` · `Informe en 48 h · evidencia verificable` · `PARTE 2 · los 3 ajustes` · placa `LINK EN LA BIO` (crece al decir «Link») · fundido de vídeo final 0,7 s.
 
 ## Voz (TTS)
+- **edge-tts** · `es-AR-TomasNeural` · **rate −12 %** · 97 palabras · 47,57 s. (La voz va embebida en el dataset `motor-media`; solo se regenera online.)
+- Marcas de límite de frase (`LASTW`): evidencia · drawio · actual · deberia · protegido · solucion · seguro · bio.
 
-- **Idioma**: ES. Voces candidatas: **edge-tts `es-ES-ElviraNeural`** (ya integrada, gratis) vs **Chatterbox** (MIT, GPU). → decisión en smoke test §8 con $ reales.
-- **Velocidad**: 1.0× (natural). Si no cabe en 58 s, subir a 1.05× (nunca >1.1× — suena a robot).
-- **Música**: ACE-Step, lecho cyber bajo (−22 LUFS bajo la voz), o silencio si ACE-Step no convence. → smoke test.
+## Música (v8 · procedural)
+- Lecho **numpy en el runner** (seed fija) clavado a la narrativa (intro → tensión → solución → cierre + whooshes) · **sidechain ducking** bajo la voz · fade-out 1,2 s · mezcla final **−14,8 LUFS** (TP −1,4).
+- Nube: la pieza prevista es ACE-Step (SPEC D-VM-05); si el procedural se mantiene, se registra como cambio de receta.
 
----
+## Subs EN karaoke
+- Poppins Bold 74 · borde negro 5 · `marginV 300` · palabra clave en color del tramo · tiempos reales de `words.json`.
 
-## Estado de aprobación
+## QA (bloqueante)
+- 1080×1920 · 30 fps · dur == TOTAL ±0,5 · h264+aac 192k · faststart · **LUFS ∈ [−16,−13]** (medido −14,8 · TP −1,4) · revisión de fotogramas antes de entregar.
 
-- [ ] Guion aprobado por el operador (bloqueante antes de gastar GPU — spec R5)
-- [ ] Modelo y voz elegidos (smoke test §8)
-- [ ] Muestra renderizada y aprobada → se congela el "look" en la spec
+## Entrega y aprobación
+- **Entregado**: `/sdcard/Download/video-01-v8.mp4` · 14.811.679 B · md5 `af45df6da8795c0f120c1646362f1055` · kernel v9 con `QA: PASS`.
+- **Aprobado**: veredicto «perfecta» = **100 %** (2026-10-19) → look congelado (SPEC v1.2).
