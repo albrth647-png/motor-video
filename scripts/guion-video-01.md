@@ -3,7 +3,7 @@
 > **Short vertical 1080×1920 · 30 fps · 49,068 s · faceless · voz ES + subs EN karaoke** · la imagen manda.
 > Fuente de datos: **real** — `oferta/informe-muestra.md` (draw.io Desktop 32.4.1). **Cero cifras inventadas.**
 > Plantilla: PLAN.md §10.5 (hook → objetivo → proceso → hallazgo → límites → CTA) — adaptada a la narrativa de **8 frases** del corte final.
-> **Estado: CONGELADO v8** — veredicto del operador (2026-10-19): «v8 perfecta» = **100 %** → receta congelada en `SPEC-MOTOR-VIDEO.md` **v1.2** (D-VM-09).
+> **Estado: CONGELADO v8** — veredicto del operador (2026-10-19): «v8 perfecta» = **100 %** → receta congelada en `SPEC-MOTOR-VIDEO.md` **v1.2** (D-VM-09; **v1.3** = backend real, sin GPU).
 > Fuente de verdad técnica: `build_nb.py` (genera `kernel.ipynb` / `render.ipynb`). Bitácora: `ITERACIONES.md`.
 
 ---
@@ -47,4 +47,4 @@
 
 ## Entrega y aprobación
 - **Entregado**: `/sdcard/Download/video-01-v8.mp4` · 14.811.679 B · md5 `af45df6da8795c0f120c1646362f1055` · kernel v9 con `QA: PASS`.
-- **Aprobado**: veredicto «perfecta» = **100 %** (2026-10-19) → look congelado (SPEC v1.2).
+- **Aprobado**: veredicto «perfecta» = **100 %** (2026-10-19) → look congelado (SPEC v1.2; v1.3 = backend CPU real, sin GPU ni tarjeta).
