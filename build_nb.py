@@ -458,7 +458,7 @@ sync=abs(dur - TOTAL) <= 0.5
 _ls = subprocess.run(['ffmpeg','-i',p,'-af','ebur128','-f','null','-'],capture_output=True,text=True).stderr
 _ms = re.findall(r'I:\\s+(-?[\\d.]+) LUFS', _ls); lufs = float(_ms[-1]) if _ms else None  # ultimo match = resumen ebur128 (los primeros son lineas de progreso)
 ok=(w,h)==(1080,1920) and dur<=60 and audio and faststart and sync and (lufs is not None) and (-16 <= lufs <= -13)
-qa={'res':f'{w}x{h}','dur':round(dur,2),'voz':round(V,2),'total':round(TOTAL,2),'lufs':lufs,'audio':audio,'faststart':faststart,'sync':sync,'QA':'PASS' if ok else 'FAIL','version':'v9','brand':'AUDIT WITH PROOF'}
+qa={'res':f'{w}x{h}','dur':round(dur,2),'voz':round(V,2),'total':round(TOTAL,2),'lufs':lufs,'audio':audio,'faststart':faststart,'sync':sync,'QA':'PASS' if ok else 'FAIL','version':__VERSION__,'brand':'AUDIT WITH PROOF'}
 print(json.dumps(qa))
 # El veredicto también queda como fichero: se descarga en KB (no el mp4 de 15 MB)
 try:
@@ -478,6 +478,10 @@ except ImportError:
     shutil.copy(str(OUT/'video-01.mp4'), '/kaggle/working/video-01.mp4')
     print('video-01.mp4 copiado a /kaggle/working (output del kernel)')
 """)
+
+# inyecta la version real del spec en las celdas (sin strings hardcodeados que envejezcan)
+for _c in cells:
+    _c['source'] = [l.replace('__VERSION__', repr(_SPEC.get('version', 'v10'))) for l in _c['source']]
 
 nb={"cells":cells,"metadata":{"colab":{"provenance":[]},"kernelspec":{"name":"python3","display_name":"Python 3"},"language_info":{"name":"python"}},"nbformat":4,"nbformat_minor":4}
 

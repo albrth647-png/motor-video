@@ -5,7 +5,7 @@
   "status": {
     "approved": false,
     "date": "2026-10-20",
-    "verdict": "PENDIENTE — el operador tiene que ver el v10 renderizado antes de aprobarlo",
+    "verdict": "QA PASS (2026-10-20) · PENDIENTE del veredicto visual del operador antes de publicar",
     "look": "CONGELADO (SPEC v1.2/v1.4) — el v10 cambia SOLO el contenido, no el look",
     "change": "v9 -> v10: hook HONESTO. El v9 afirmaba una vulnerabilidad que oferta/informe-muestra.md REFUTA (§1: 'Sin hallazgos criticos', 0 CVEs) y que la auditoria nunca examinó ('modo de incognito' no aparece en el informe). El v10 cuenta la historia real: 0 vulnerabilidades + lo que no se pudo saber.",
     "frozen_versions": [
@@ -29,14 +29,14 @@
     "pixel_format": "yuv420p",
     "loudnorm": "2-pases (analisis JSON -> pase lineal)",
     "target_lufs": -14,
-    "measured_lufs": null,
+    "measured_lufs": -14.9,
     "measured_true_peak_dbfs": null,
     "faststart": true
   },
   "timing": {
-    "voice_s": null,
+    "voice_s": 51.1,
     "tail_s": 1.5,
-    "total_s": null,
+    "total_s": 52.6,
     "shots": 16,
     "phrases": 8,
     "note": "La voz se regenera en CI (edge-tts necesita internet y Kaggle no la tiene). Los tiempos se miden en el render; aqui van como referencia."
@@ -261,13 +261,14 @@
       "LUFS en [-16,-13] (ebur128, ULTIMO match)",
       "fotogramas revisados"
     ],
-    "kernel_result": "PENDIENTE (v10 sin renderizar)"
+    "kernel_result": "PASS (kernel v11 · 1080x1920 · 52.6 s · LUFS -14.9 · faststart · sync)"
   },
   "delivery": {
     "path": null,
     "bytes": null,
     "md5": null,
-    "kaggle_kernel": "yurislay/motor-video-v2"
+    "kaggle_kernel": "yurislay/motor-video-v2",
+    "where": "salida del kernel (Kaggle) — el mp4 NO se baja al movil; se sube a YouTube desde el runner"
   },
   "note": "Resumen del v10 (hook honesto). Guion completo: guion-video-01.md. Historial: ITERACIONES.md."
 }
