@@ -288,6 +288,37 @@ def _banner(concepto: str) -> Image.Image:
     return img.convert("RGB")
 
 
+def _thumb(concepto: str) -> Image.Image:
+    """Miniatura 1280x720 para YouTube: el simbolo, el titular y el dato."""
+    W, H = 1280, 720
+    img = Image.new("RGBA", (W, H), rgba(FONDO))
+    d = ImageDraw.Draw(img)
+    for j in range(11):
+        for i in range(24):
+            d.ellipse([30 + i * 52, 30 + j * 62, 36 + i * 52, 36 + j * 62],
+                       fill=rgba(DETALLE, 45))
+    sym = simbolo(concepto, 260)
+    img.alpha_composite(sym, (70, 210))
+
+    x = 400
+    texto_marca.actual = "AUDIT"
+    texto_marca(d, x, 170, 74, TEXTO, 0.03)
+    texto_marca.actual = "WITH PROOF"
+    texto_marca(d, x, 255, 74, MARCA, 0.03)
+    d.rounded_rectangle([x, 348, x + 230, 356], radius=4, fill=rgba(MARCA))
+
+    f2 = font(56)
+    d.text((x, 395), "Desarme draw.io", font=f2, fill=rgba(TEXTO))
+    d.text((x, 462), "con IA gratis", font=f2, fill=rgba(TEXTO))
+
+    f3 = font(27)
+    d.text((x, 556), "0 CVEs activos  ·  92.468 desconocidos declarados",
+           font=f3, fill=rgba(MARCA))
+    d.text((x, 600), "Informe con evidencia verificable y limites declarados",
+           font=f3, fill=rgba(DETALLE))
+    return img.convert("RGB")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="/sdcard/Download/brand")
@@ -313,6 +344,9 @@ def main():
         print("·", p.name, p.stat().st_size, "B")
         p = out / f"banner-{c}-2560x1440.png"
         _banner(c).save(p, quality=95)
+        print("·", p.name, p.stat().st_size, "B")
+        p = out / f"thumb-{c}-1280x720.png"
+        _thumb(c).save(p, quality=95)
         print("·", p.name, p.stat().st_size, "B")
     print("\n✅ Identidad generada en", out)
 
