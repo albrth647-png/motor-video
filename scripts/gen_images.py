@@ -18,6 +18,7 @@ Variables de entorno (Secrets del repo):
 Uso:  python3 scripts/gen_images.py --spec scripts/video-01.json --out /tmp/media
 """
 import argparse
+import base64
 import io
 import json
 import os
@@ -46,7 +47,20 @@ def generate(account: str, token: str, prompt: str, dst: Path, tries: int = 3) -
                 },
             )
             with urllib.request.urlopen(req, timeout=240) as r:
-                data = r.read()
+                raw = r.read()
+            # Workers AI devuelve JSON: {"success":true,"result":{"image":"<base64>"}}
+            # (formato verificado con el generador local que hizo las imagenes del v9).
+            # Se acepta tambien imagen cruda por si el endpoint cambia.
+            data = raw
+            try:
+                payload = json.loads(raw)
+                b64 = (payload.get("result") or {}).get("image") if isinstance(payload, dict) else None
+                if b64:
+                    data = base64.b64decode(b64)
+                elif isinstance(payload, dict) and payload.get("success") is False:
+                    raise RuntimeError(f"FLUX devolvio success=false: {str(payload)[:200]}")
+            except json.JSONDecodeError:
+                pass
             if len(data) < 1024:
                 raise RuntimeError(f"respuesta demasiado corta ({len(data)} bytes)")
             # PNG -> JPEG (el kernel lee .jpg)
