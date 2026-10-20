@@ -82,18 +82,7 @@
     "margin_v": 300
   },
   "images": {
-    "reused_from_dataset": [
-      8,
-      9,
-      10,
-      11,
-      13,
-      14,
-      16,
-      17,
-      19,
-      20
-    ],
+    "reused_from_dataset": [],
     "new_to_generate": [
       21,
       22,
@@ -117,6 +106,16 @@
     ],
     "why_retired": "Representan un ataque (candado roto, escudo agrietado, atacante, ojo rastreador, grieta) o el 'modo de incognito' que la auditoria NUNCA examino. El v10 no afirma un ataque.",
     "prompts": {
+      "8": "a heavy circular vault door made of teal-green light closing shut in dark space, energy sealing the edges, hopeful confident mood",
+      "9": "three glowing holographic toggle switches floating in aligned row in dark space, a protective shield silhouette forming behind them, teal green glow",
+      "10": "a solid glowing blue shield with a closed padlock at its center floating in front of a pristine modern laptop, calm reassuring blue lighting",
+      "11": "abstract dark technology background with flowing teal circuit light trails and soft particles drifting toward the upper right corner, clean empty center space",
+      "13": "a stack of floating dark glass app windows in a dark void, only the top window glowing with ominous red light and fine hairline cracks, the deeper ones fading into black, cinematic depth",
+      "14": "extreme close-up of a glowing magnifying glass hovering over a dark holographic flowchart, faint red anomaly nodes lighting up under the lens, volumetric light",
+      "16": "a padlock made of solid green light snapping shut around a floating dark flowchart node, a ring of green energy sealing it, decisive hopeful mood",
+      "17": "a serene floating glass cube containing a glowing protected diagram inside, soft teal ambient light, calm reflections, safe and secure mood",
+      "19": "cinematic dark tech studio scene: a sleek laptop on a dark desk at the bottom of the frame, glowing teal holographic code and interface panels floating above its screen, large clean empty dark space in the center of the frame, volumetric light, shallow depth of field",
+      "20": "a subtle emblem of concentric light rings with a soft shield silhouette made of teal green particles floating in deep dark space, soft glow concentrated toward the frame edges, large clean dark empty center, elegant minimal cinematic mood",
       "21": "dark workstation, holographic node graph floating above a terminal, cyan and amber light, volumetric fog, no text, no letters",
       "22": "a blurred translucent code panel with one clear question mark, teal glow on deep navy, shallow depth of field, no text",
       "23": "rows of package cards on a dark interface, one highlighted, clean geometric data visualization, no readable text, no letters",
@@ -124,7 +123,10 @@
       "25": "a vast field of white points in the dark with a soft unfocused region, sense of the unknown, minimal, no text",
       "26": "floating numeric counter panels and a document sheet, teal and violet, clean data aesthetic, no readable text, no letters",
       "27": "a printed report on a dark desk with a seal and a magnifying glass, warm light, cinematic, no readable text"
-    }
+    },
+    "style": "dark cinematic cyber security aesthetic, deep navy and black tones, volumetric lighting, ultra detailed, photorealistic, vertical 9:16 composition, no text, no letters, no numbers, no watermark",
+    "regenerate_all": true,
+    "why_regenerate_all": "El pipeline tiene que ser REPRODUCIBLE y no depender del historial del dataset: se regeneran las 17 imagenes en CI con los MISMOS prompts del v9 (mismo estilo), asi que no hace falta bajar la version anterior del dataset (0 MB en el movil) y el dataset nunca queda a medias."
   },
   "intro": {
     "over": "shot19",

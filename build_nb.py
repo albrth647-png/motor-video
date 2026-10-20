@@ -69,7 +69,9 @@ if not (FDIR/'Poppins-Bold.ttf').exists() and Path(FONTFILE).exists():
     print('fuente copiada a fontsdir (subtitulos):', FDIR/'Poppins-Bold.ttf')
 
 IMGDIR = None
-for _p in (ASSETS/'imgs', MEDIA/'imgs', STATIC/'imgs_fb', Path('/content/motor-video/imgs')):
+# El dataset publica las imagenes en su RAIZ (Kaggle versiona ficheros, no carpetas):
+# se mira primero MEDIA (raiz) y luego MEDIA/'imgs' (compat con el dataset antiguo).
+for _p in (MEDIA, ASSETS/'imgs', MEDIA/'imgs', STATIC/'imgs_fb', Path('/content/motor-video/imgs')):
     if _p.exists() and any(_p.glob('shot*.jpg')): IMGDIR = _p; break
 if IMGDIR is None: raise SystemExit('FALTAN las imagenes IA (shot*.jpg)')
 NIMG = len(list(IMGDIR.glob('shot*.jpg')))

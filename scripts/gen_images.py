@@ -95,6 +95,7 @@ def main() -> None:
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
 
+    style = spec["images"].get("style", "").strip()
     todo = {k: v for k, v in prompts.items() if not wanted or k in wanted}
     print(f"· imágenes a generar: {len(todo)} ({', '.join(sorted(todo, key=int))})")
     for num, prompt in sorted(todo.items(), key=lambda kv: int(kv[0])):
@@ -102,7 +103,8 @@ def main() -> None:
         if dst.exists() and dst.stat().st_size > 1024:
             print(f"  · {dst.name} ya existe → se reutiliza")
             continue
-        generate(account, token, prompt, dst)
+        full = f"{prompt}, {style}" if style else prompt
+        generate(account, token, full, dst)
     print("· generación de imágenes OK")
 
 
