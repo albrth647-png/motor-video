@@ -4,3 +4,6 @@ __pycache__/
 *.pyc
 cookies.json
 *.env
+
+# generado por build_nb.py (fuente unica: scripts/video-01.json) -> no se versiona
+voice-spec.json

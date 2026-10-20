@@ -1,12 +1,22 @@
 {
   "id": "video-01",
   "title": "Desarmé draw.io con IA gratis",
+  "version": "v10",
   "status": {
-    "approved": true,
-    "date": "2026-10-19",
-    "verdict": "«v8 perfecta» = 100 %",
-    "freeze": "SPEC-MOTOR-VIDEO.md v1.2 (D-VM-09)",
-    "source_of_truth": "build_nb.py → kernel.ipynb (Kaggle) / render.ipynb (Colab); receta: ITERACIONES.md"
+    "approved": false,
+    "date": "2026-10-20",
+    "verdict": "PENDIENTE — el operador tiene que ver el v10 renderizado antes de aprobarlo",
+    "look": "CONGELADO (SPEC v1.2/v1.4) — el v10 cambia SOLO el contenido, no el look",
+    "change": "v9 -> v10: hook HONESTO. El v9 afirmaba una vulnerabilidad que oferta/informe-muestra.md REFUTA (§1: 'Sin hallazgos criticos', 0 CVEs) y que la auditoria nunca examinó ('modo de incognito' no aparece en el informe). El v10 cuenta la historia real: 0 vulnerabilidades + lo que no se pudo saber.",
+    "frozen_versions": [
+      "v9 (NO PUBLICAR — se Archivó en git)"
+    ],
+    "source_of_truth": "build_nb.py → kernel.ipynb (Kaggle) / render.ipynb (Colab); receta: ITERACIONES.md",
+    "publication": {
+      "publishable": false,
+      "reason": "Pide el render del v10 + QA-gate + el veredicto del operador. Hasta entonces no se sube a ningun canal.",
+      "ref": "investigacion/INFORME-REDES-2026.md §6"
+    }
   },
   "format": {
     "width": 1080,
@@ -19,38 +29,39 @@
     "pixel_format": "yuv420p",
     "loudnorm": "2-pases (analisis JSON -> pase lineal)",
     "target_lufs": -14,
-    "measured_lufs": -14.8,
-    "measured_true_peak_dbfs": -1.4,
+    "measured_lufs": null,
+    "measured_true_peak_dbfs": null,
     "faststart": true
   },
   "timing": {
-    "voice_s": 47.57,
+    "voice_s": null,
     "tail_s": 1.5,
-    "total_s": 49.068,
-    "shots": 20,
-    "phrases": 8
+    "total_s": null,
+    "shots": 16,
+    "phrases": 8,
+    "note": "La voz se regenera en CI (edge-tts necesita internet y Kaggle no la tiene). Los tiempos se miden en el render; aqui van como referencia."
   },
   "source": {
     "target": "draw.io Desktop 32.4.1",
     "evidence": "oferta/informe-muestra.md",
-    "disclaimer": "cifras reales del informe; ningun numero inventado"
+    "disclaimer": "cifras reales del informe; ningun numero inventado; ninguna vulnerabilidad afirmada sin evidencia"
   },
   "voice": {
     "engine": "edge-tts",
     "voice_id": "es-AR-TomasNeural",
     "rate": "-12%",
-    "words": 97,
+    "words": 75,
     "marks_lastw": [
-      "evidencia",
-      "drawio",
-      "actual",
-      "deberia",
-      "protegido",
-      "solucion",
-      "seguro",
-      "bio"
+      "vulnerabilidad",
+      "nodos",
+      "activa",
+      "verificar",
+      "origen",
+      "saber",
+      "declarados",
+      "evidencia"
     ],
-    "note": "voz embebida en dataset motor-media (voz.mp3 + words.json)"
+    "note": "La voz (voz.mp3) + words.json se generan EN CI y se suben al dataset motor-media. El kernel (Kaggle, sin internet) los consume."
   },
   "music": {
     "engine": "procedural-numpy (en el runner)",
@@ -70,13 +81,58 @@
     "outline": 5,
     "margin_v": 300
   },
+  "images": {
+    "reused_from_dataset": [
+      8,
+      9,
+      10,
+      11,
+      13,
+      14,
+      16,
+      17,
+      19,
+      20
+    ],
+    "new_to_generate": [
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ],
+    "retired_from_v9": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      12,
+      15,
+      18
+    ],
+    "why_retired": "Representan un ataque (candado roto, escudo agrietado, atacante, ojo rastreador, grieta) o el 'modo de incognito' que la auditoria NUNCA examino. El v10 no afirma un ataque.",
+    "prompts": {
+      "21": "dark workstation, holographic node graph floating above a terminal, cyan and amber light, volumetric fog, no text, no letters",
+      "22": "a blurred translucent code panel with one clear question mark, teal glow on deep navy, shallow depth of field, no text",
+      "23": "rows of package cards on a dark interface, one highlighted, clean geometric data visualization, no readable text, no letters",
+      "24": "network of connected nodes where only two are highlighted and the rest are dim, isometric, deep blue, no text",
+      "25": "a vast field of white points in the dark with a soft unfocused region, sense of the unknown, minimal, no text",
+      "26": "floating numeric counter panels and a document sheet, teal and violet, clean data aesthetic, no readable text, no letters",
+      "27": "a printed report on a dark desk with a seal and a magnifying glass, warm light, cinematic, no readable text"
+    }
+  },
   "intro": {
     "over": "shot19",
     "texts": [
       "AUDIT WITH PROOF",
-      "AUDITORÍA REAL",
+      "0 VULNERABILIDADES",
       "draw.io Desktop 32.4.1",
-      "con evidencia verificable"
+      "y lo que no se pudo saber"
     ]
   },
   "endcard": {
@@ -85,7 +141,7 @@
       "AUDIT WITH PROOF",
       "¿TU APP ES ELECTRON?",
       "Informe en 48 h · evidencia verificable",
-      "PARTE 2 · los 3 ajustes",
+      "PARTE 2 · lo que no se pudo saber",
       "LINK EN LA BIO"
     ],
     "video_fade_out_s": 0.7
@@ -98,98 +154,102 @@
         4.91
       ],
       "shots": [
-        19
+        19,
+        14
       ],
-      "voice_es": "Audit with Proof. Auditoría real, con evidencia."
+      "voice_es": "Auditamos draw.io Desktop. Y no encontramos ninguna vulnerabilidad.",
+      "subs_en": "We audited draw.io Desktop. And found no vulnerability."
     },
     {
       "n": 1,
       "t": [
-        5.98,
-        8.91
+        4.91,
+        10.5
       ],
       "shots": [
-        1,
-        12
+        21
       ],
-      "voice_es": "Descubri una falla de seguridad en draw.io."
+      "voice_es": "34 megabytes de JavaScript. Mas de 3 millones de nodos.",
+      "subs_en": "34 megabytes of JavaScript. Over 3 million nodes."
     },
     {
       "n": 2,
       "t": [
-        9.99,
-        14.56
+        10.5,
+        16.9
       ],
       "shots": [
-        2,
-        13
+        13,
+        23
       ],
-      "voice_es": "Y lo peor es que afecta a la version 32.4.1, la actual."
+      "voice_es": "82 paquetes. Cinco vulnerabilidades candidatas, ninguna activa.",
+      "subs_en": "82 packages. Five candidate vulnerabilities, none active."
     },
     {
       "n": 3,
       "t": [
-        15.6,
-        20.36
+        16.9,
+        23.4
       ],
       "shots": [
-        14,
-        3,
-        4,
-        5
+        22
       ],
-      "voice_es": "En mi auditoria encontre que el modo de incognito no aisla las sesiones como deberia."
+      "voice_es": "Cinco ventanas. Una es dinamica y no se puede verificar.",
+      "subs_en": "Five windows. One is dynamic and can't be verified."
     },
     {
       "n": 4,
       "t": [
-        21.41,
-        26.69
+        23.4,
+        28.9
       ],
       "shots": [
-        6,
-        15,
-        7
+        24
       ],
-      "voice_es": "Un atacante podria rastrear los diagramas que abres incluso cuando crees que estas protegido."
+      "voice_es": "29 handlers de IPC. Solo dos con validacion de origen.",
+      "subs_en": "29 IPC handlers. Only two with sender validation."
     },
     {
       "n": 5,
       "t": [
-        27.74,
-        28.76
+        28.9,
+        33.0
       ],
       "shots": [
-        8
+        25
       ],
-      "voice_es": "Pero hay solucion."
+      "voice_es": "Lo importante es lo que no se pudo saber.",
+      "subs_en": "What matters is what we couldn't know."
     },
     {
       "n": 6,
       "t": [
-        29.82,
-        35.67
+        33.0,
+        41.5
       ],
       "shots": [
-        9,
+        26,
         16,
-        10,
         17
       ],
-      "voice_es": "Con tres ajustes de configuracion podes cerrar esa puerta y dejar tu draw.io realmente seguro."
+      "voice_es": "92.468 desconocidos, cada uno con su ID. Y diez limites declarados.",
+      "subs_en": "92,468 unknowns, each with its ID. Ten declared limits."
     },
     {
       "n": 7,
       "t": [
-        36.7,
-        46.46
+        41.5,
+        47.5
       ],
       "shots": [
-        18,
-        11,
-        20
+        20,
+        9,
+        10,
+        8,
+        11
       ],
-      "voice_es": "En la parte dos te muestro los tres ajustes. ¿Tu app es Electron? Te la audito con esta misma evidencia. Link en la bio."
+      "voice_es": "Si tu app es Electron, auditala. 48 horas, con evidencia.",
+      "subs_en": "If your app is Electron, audit it. 48 hours, with evidence."
     }
   ],
   "qa": {
@@ -201,13 +261,13 @@
       "LUFS en [-16,-13] (ebur128, ULTIMO match)",
       "fotogramas revisados"
     ],
-    "kernel_result": "PASS (kernel v9 · lufs -14.8)"
+    "kernel_result": "PENDIENTE (v10 sin renderizar)"
   },
   "delivery": {
-    "path": "/sdcard/Download/video-01-v8.mp4",
-    "bytes": 14811679,
-    "md5": "af45df6da8795c0f120c1646362f1055",
+    "path": null,
+    "bytes": null,
+    "md5": null,
     "kaggle_kernel": "yurislay/motor-video-v2"
   },
-  "note": "Resumen congelado v8. Guion completo: guion-video-01.md. Historial: ITERACIONES.md."
+  "note": "Resumen del v10 (hook honesto). Guion completo: guion-video-01.md. Historial: ITERACIONES.md."
 }

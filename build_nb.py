@@ -5,11 +5,23 @@ cells = []
 def md(s): cells.append({"cell_type":"markdown","metadata":{},"source":s.strip().splitlines(True)})
 def code(s): cells.append({"cell_type":"code","execution_count":None,"metadata":{},"outputs":[],"source":s.strip().splitlines(True)})
 
-md("""# motor-video · Video 01 v8 — 20 planos IA + musica procedural + intro animada + CTA reforzado (subtitulos EN)
+# --- SPEC: scripts/video-01.json es la FUENTE UNICA de la voz y del texto ---
+# Las 8 frases (phrases[].voice_es) se concatenan para formar el TEXTO que se
+# sintetiza. build_nb.py (este fichero) y gen_voice.py (CI) leen el MISMO JSON:
+# si el guion cambia, cambian los dos a la vez -> no se pueden desincronizar.
+import json as _json
+_ENGINE_DIR = Path(__file__).resolve().parent
+_SPEC = _json.loads((_ENGINE_DIR / 'scripts' / 'video-01.json').read_text(encoding='utf-8'))
+_VOICE = _SPEC['voice']['voice_id']
+_RATE = _SPEC['voice']['rate']
+_TEXT = ' '.join(p['voice_es'] for p in _SPEC['phrases'])
+print('spec:', _VOICE, _RATE, '·', len(_TEXT.split()), 'palabras ·', len(_SPEC['phrases']), 'frases')
+
+md("""# motor-video · Video 01 v10 — 16 planos, hook HONESTO (0 vulnerabilidades + lo que no se pudo saber)
 
 **Las imagenes mandan**: cada plano es una imagen IA que ilustra lo que dice la voz en ese tramo.
-20 planos (v6 + intro con tarjeta de titulo + endcard CTA), cortes duros ~1.5-2.2s (ritmo Shorts),
-narrativa de color: turquesa marca → rojo = peligro → turquesa/verde = solucion.
+16 planos (10 reutilizados del dataset + 7 nuevos shot21..shot27), cortes duros ~1.5-2.2s (ritmo Shorts),
+narrativa de color: turquesa marca → verde = 0 activos → naranja = atencion → violeta = lo desconocido → turquesa = transparencia.
 Tipografia REAL para intro/CTA en ASS (D-VM-04: la IA nunca dibuja texto) + animaciones ASS
 (scrim, subrayado, entradas) y **lecho musical sintetizado en el runner** (numpy, sin descargas ni licencias)
 mezclado con sidechain bajo la voz + cola final con fade.
@@ -20,11 +32,8 @@ grading + vineta → scrim + intro animada (subrayado) + subtitulos EN + endcard
 lecho musical procedural (numpy, sidechain) + cola con fade → QA gate → faststart. Sin GPU, sin internet, sin datos extra.
 """)
 
-code("""
+_CELL1 = """
 import os, subprocess, sys, json, urllib.request, zipfile
-from pathlib import Path
-%pip install -q --retries 1 --timeout 15 edge-tts "diffusers>=0.35" transformers accelerate sentencepiece "imageio[ffmpeg]"
-
 WORK = Path('/content/motor-video'); OUT = WORK/'out'; FDIR = WORK/'fonts'
 OUT.mkdir(parents=True, exist_ok=True); FDIR.mkdir(parents=True, exist_ok=True)
 
@@ -66,41 +75,47 @@ if IMGDIR is None: raise SystemExit('FALTAN las imagenes IA (shot*.jpg)')
 NIMG = len(list(IMGDIR.glob('shot*.jpg')))
 print('imagenes IA:', NIMG, 'en', IMGDIR)
 
-# --- PLAN de 20 planos (la imagen MANDA): (imagen, frase 0-7, peso del tramo) ---
+# --- PLAN de 16 planos (la imagen MANDA): (imagen, frase 0-7, peso del tramo) ---
+# v10: hook HONESTO. Se reutilizan 10 imagenes del dataset motor-media y se anaden
+#      7 nuevas (shot21..shot27) con otro significado. Las imagenes del v9 (candado
+#      roto, escudo agrietado, mascara de incognito, atacante, ojo rastreador,
+#      grieta) YA NO SE USAN: el v9 afirmaba una vulnerabilidad que el informe
+#      refuta. Ver investigacion/INFORME-REDES-2026.md sec.6.
 PLAN = [
- (19, 0, 1.00),  # intro (nueva)         "Audit with Proof. Auditoría real, con evidencia"
- ( 1, 1, 1.00),  # candado roto          "Descubri una falla..."
- (12, 1, 0.90),  # grieta en el diagrama "una falla de seguridad en draw.io"
- ( 2, 2, 1.00),  # laptop roja           "Y lo peor es que afecta"
- (13, 2, 0.90),  # versiones en fila     "a la version 32.4.1, la actual"
- (14, 3, 0.80),  # lupa de auditoria     "En mi auditoria"
- ( 3, 3, 1.00),  # escudo agrietado      "encontre que el modo"
- ( 4, 3, 0.95),  # mascara incognito     "de incognito"
- ( 5, 3, 0.95),  # ventanas con fuga     "no aisla las sesiones como deberia"
- ( 6, 4, 0.90),  # atacante              "Un atacante podria"
- (15, 4, 0.85),  # rastro de luz         "rastrear los diagramas que abres"
- ( 7, 4, 1.00),  # ojo rastreador        "incluso cuando crees que estas protegido"
- ( 8, 5, 1.00),  # boveda turquesa       "Pero hay solucion"
- ( 9, 6, 0.90),  # 3 ajustes             "Con tres ajustes de configuracion"
- (16, 6, 0.90),  # candado verde         "podes cerrar esa puerta"
- (10, 6, 1.00),  # laptop segura         "y dejar tu draw.io"
- (17, 6, 0.90),  # cubo protegido        "realmente seguro"
- (18, 7, 0.55),  # play de luz           "En la parte dos te muestro"
- (11, 7, 0.40),  # fondo CTA             "los tres ajustes"
- (20, 7, 0.85),  # endcard (nueva)       "¿Tu app es Electron? ... Link en la bio"
+  (19, 0, 1.00),  # intro (estudio + codigo holografico) "Auditamos draw.io"
+  (14, 0, 0.90),  # lupa de auditoria             "...y no encontramos ninguna vulnerabilidad"
+  (21, 1, 1.00),  # NUEVO grafo de nodos          "34 MB de JavaScript, 3M de nodos"
+  (13, 2, 1.00),  # versiones en fila            "El inventario dio 82 paquetes"
+  (23, 2, 0.90),  # NUEVO tarjetas de paquetes   "...de cinco candidatas, ninguna activa"
+  (22, 3, 1.00),  # NUEVO panel de codigo borroso"5 ventanas, 1 dinamica: no verificable"
+  (24, 4, 1.00),  # NUEVO red de nodos (2 vivos)  "29 handlers de IPC, solo 2 con validacion"
+  (25, 5, 1.00),  # NUEVO mar de puntos          "lo que no se pudo saber"
+  (26, 6, 1.00),  # NUEVO contadores              "92.468 desconocidos con su ID"
+  (16, 6, 0.80),  # candado verde                 "...y diez limites declarados"
+  (17, 6, 0.80),  # cubo protegido
+  (20, 7, 1.00),  # endcard                       "Si tu app es Electron, auditala"
+  ( 9, 7, 0.70),  # 3 ajustes
+  (10, 7, 0.70),  # laptop segura
+  ( 8, 7, 0.60),  # boveda turquesa
+  (11, 7, 0.60),  # fondo CTA
 ]
 _missing = [i for i,_s,_w in PLAN if not (IMGDIR/('shot%02d.jpg'%i)).exists()]
 if _missing: raise SystemExit('faltan imagenes del plan: %s' % _missing)
 print('PLAN OK ·', len(PLAN), 'planos para 8 frases')
 
-VOZ = 'es-AR-TomasNeural'   # voz masculina rioplatense (encaja con el "podes" del guion)
-TEXTO = ('Audit with Proof. Auditoría real, con evidencia. '
- 'Descubri una falla de seguridad en draw.io. Y lo peor es que afecta a la version 32.4.1, la actual. '
- 'En mi auditoria encontre que el modo de incognito no aisla las sesiones como deberia. '
- 'Un atacante podria rastrear los diagramas que abres incluso cuando crees que estas protegido. '
- 'Pero hay solucion. Con tres ajustes de configuracion podes cerrar esa puerta y dejar tu draw.io realmente seguro. '
- 'En la parte dos te muestro los tres ajustes. ¿Tu app es Electron? Te la audito con esta misma evidencia. Link en la bio.')
-""")
+VOZ = __VOZ__   # rioplatense (viene de scripts/video-01.json)
+TEXTO = __TEXTO__
+"""
+
+code(_CELL1.replace('__VOZ__', repr(_VOICE)).replace('__TEXTO__', repr(_TEXT)))
+
+# Exporta la especificacion de voz para que gen_voice.py (que corre en CI, donde
+# SI hay internet) use EXACTAMENTE el mismo texto y la misma voz. Fuente unica:
+# si el TEXTO cambia aqui, cambia tambien en el audio -> no se desincronizan.
+import json as _json
+_voice_spec = {"voice": _VOICE, "rate": _RATE, "text": _TEXT}
+Path(str(_ENGINE_DIR / 'voice-spec.json')).write_text(_json.dumps(_voice_spec, ensure_ascii=False, indent=1))
+print('voice-spec.json escrito (voz, rate, texto)')
 
 code("""
 import asyncio, subprocess
@@ -131,7 +146,7 @@ import unicodedata
 def _norm(w):
     w = unicodedata.normalize('NFD', w.lower())
     return ''.join(c for c in w if c.isalnum())
-LASTW = ['evidencia','drawio','actual','deberia','protegido','solucion','seguro','bio']
+LASTW = ['vulnerabilidad','nodos','activa','verificar','origen','saber','declarados','evidencia']
 bnd, _pos = [], 0
 for _lw in LASTW:
     _f = next((i for i in range(_pos, len(words)) if _norm(words[i]['w'])==_lw), None)
@@ -165,20 +180,20 @@ print('SHOTS:', len(SHOTS), 'planos · fin', SHOTS[-1][2], 's · duraciones', [r
 for _s in SHOTS: print('  img%02d %5.2f-%5.2f %s' % (_s[0], _s[1], _s[2], _s[3]))
 
 # --- acento de color por tramo (narrativa rojo -> turquesa, alineada a las frases) ---
-ACC = [(spans[0][1],'0x8fe3cf'), (spans[2][1],'0xff5a5a'), (spans[3][1],'0x9aa4ff'), (spans[4][1],'0xff7a3a'), (spans[6][1],'0x4ade80'), (10**9,'0x8fe3cf')]
+ACC = [(spans[0][1],'0x8fe3cf'), (spans[1][1],'0x8fe3cf'), (spans[2][1],'0x4ade80'), (spans[3][1],'0xff7a3a'), (spans[4][1],'0x9aa4ff'), (spans[5][1],'0xc9a0ff'), (spans[6][1],'0x8fe3cf'), (10**9,'0x8fe3cf')]
 
 # --- subtitulos EN karaoke palabra a palabra (audio ES — SPEC D-VM-06) ---
 EN = [
- ['REA','expert','services.','A','real','audit,','with','evidence.'],
- ['I','found','a','security','flaw','in','draw.io'],
- ['And','the','worst','part','it','affects','version','32.4.1','the','current','one'],
- ['In','my','audit','I','found','incognito','mode',"doesn't",'isolate','sessions','like','it','should'],
- ['An','attacker','could','track','the','diagrams','you','open','even','when','you','think',"you're",'protected'],
- ['But',"there's",'a','fix'],
- ['Three','config','tweaks','close','that','door','and','keep','your','draw.io','truly','secure'],
- ['Part','two','shows','the','three','tweaks.','Building','an','Electron','app?',"I'll",'audit','yours','with','this','same','evidence.','Link','in','bio.'],
+ ['We','audited','draw.io','Desktop.','And','found','no','vulnerability.'],
+ ['34','megabytes','of','JavaScript.','Over','3','million','nodes.'],
+ ['82','packages.','Five','candidate','vulnerabilities,','none','active.'],
+ ['Five','windows.','One','is','dynamic','and',"can't",'be','verified.'],
+ ['29','IPC','handlers.','Only','two','with','sender','validation.'],
+ ['What','matters','is','what','we',"couldn't",'know.'],
+ ['92,468','unknowns,','each','with','its','ID.','Ten','declared','limits.'],
+ ['If','your','app','is','Electron,','audit','it.','48','hours,','with','evidence.'],
 ]
-KW = ('32.4.1','FLAW','INCOGNITO','TRACK','FIX','TWEAKS','TRULY','SECURE','PROTECTED','AUDIT','REAL','ELECTRON','LINK','BUILDING','PART')
+KW = ('34','MILLION','PACKAGES','VULNERABILITIES','ACTIVE','WINDOWS','DYNAMIC','VERIFIED','HANDLERS','TWO','SENDER','VALIDATION','COULDN','92,468','UNKNOWNS','LIMITS','EVIDENCE','AUDIT','ELECTRON','32.4.1')
 def hex2ass(h):  # '0xRRGGBB' -> '&H00BBGGRR&' (BGR de ASS)
     r,g,b = h[2:4], h[4:6], h[6:8]
     return ('&H00%s%s%s&' % (b,g,r)).upper()
@@ -212,9 +227,9 @@ _i_end = spans[0][1] + 0.30
 ev_bg.append(_d(0.20, _i_end, 'Scrim', _scrim('BA', 400, 350)))
 ev_fg.append(_d(0.62, _i_end, 'Bar', _grp('p1','an5','pos(540,700)','bord0','shad0','fad(160,230)') + 'm 0 0 l 320 0 l 320 7 l 0 7' + _grp('p0')))
 ev_fg.append(_d(0.25, _i_end, 'Brand', _grp('fad(280,240)','move(540,678,540,650,0,420)') + 'AUDIT WITH PROOF'))
-ev_fg.append(_d(0.50, _i_end, 'Title', _grp('fad(300,240)','pos(540,815)','fscx92','fscy92','t(0,460,'+BS+'fscx100'+BS+'fscy100)') + 'AUDITORÍA REAL'))
+ev_fg.append(_d(0.50, _i_end, 'Title', _grp('fad(300,240)','pos(540,815)','fscx92','fscy92','t(0,460,'+BS+'fscx100'+BS+'fscy100)') + '0 VULNERABILIDADES'))
 ev_fg.append(_d(0.80, _i_end, 'Sub', _grp('fad(320,240)','move(540,952,540,935,0,380)') + 'draw.io Desktop 32.4.1'))
-ev_fg.append(_d(1.05, _i_end, 'Sub', _grp('fad(320,240)','move(540,1022,540,1005,0,380)') + 'con evidencia verificable'))
+ev_fg.append(_d(1.05, _i_end, 'Sub', _grp('fad(320,240)','move(540,1022,540,1005,0,380)') + 'y lo que no se pudo saber'))
 _ei = [i for i, s in enumerate(SHOTS) if s[0] == 20]
 _t_link = next((w['t0'] for w in words if _norm(w['w']) == 'link'), None)
 if _ei:
@@ -223,7 +238,7 @@ if _ei:
     ev_fg.append(_d(t_e + 0.20, TOTAL, 'Brand', _grp('fad(280,400)','move(540,668,540,640,0,420)') + 'AUDIT WITH PROOF'))
     ev_fg.append(_d(t_e + 0.40, TOTAL, 'Title', _grp('fad(300,400)','pos(540,830)','fscx92','fscy92','t(0,460,'+BS+'fscx100'+BS+'fscy100)') + '¿TU APP ES ELECTRON?'))
     ev_fg.append(_d(t_e + 0.65, TOTAL, 'Sub', _ov('Informe en 48 h · evidencia verificable', 990, 420, 400)))
-    ev_fg.append(_d(t_e + 0.85, TOTAL, 'Sub', _ov('PARTE 2 · los 3 ajustes', 1065, 420, 400)))
+    ev_fg.append(_d(t_e + 0.85, TOTAL, 'Sub', _ov('PARTE 2 · lo que no se pudo saber', 1065, 420, 400)))
     t0l = max(t_e + 0.25, (_t_link - 0.20) if _t_link is not None else t_e + 1.1)
     ev_fg.append(_d(t0l - 0.15, TOTAL, 'Bar', _grp('p1','an5','pos(540,1300)','fad(160,420)','1c&H141414&','alpha&H28&','bord0','shad0') + 'm 0 0 l 520 0 l 520 112 l 0 112' + _grp('p0')))
     ev_fg.append(_d(t0l, TOTAL, 'Link', _grp('fad(300,420)','pos(540,1300)','t(160,700,'+BS+'fscx108'+BS+'fscy108)') + 'LINK EN LA BIO'))
@@ -465,9 +480,18 @@ nb={"cells":cells,"metadata":{"colab":{"provenance":[]},"kernelspec":{"name":"py
 
 # render.ipynb (Colab, rutas /content) y kernel.ipynb (Kaggle, rutas /kaggle/working)
 src = json.dumps(nb, ensure_ascii=False, indent=1)
-Path('/root/Rea/motor-video/engine/render.ipynb').write_text(src)
+# Rutas relativas al propio script: el mismo build_nb.py sirve en local y en CI.
+import os as _os
+_ENG = Path(_os.environ.get('ENGINE_DIR', _os.path.dirname(_os.path.abspath(__file__))))
+_ENG.mkdir(parents=True, exist_ok=True)
+Path(str(_ENG / 'render.ipynb')).write_text(src)
 kag = src.replace('/content/motor-video', '/kaggle/working/motor-video')
-Path('/tmp/opencode/kag/kernel.ipynb').write_text(kag)
+# La ruta de salida del kernel es configurable: en CI no es /tmp/opencode.
+import os as _os
+_KOUT = _os.environ.get('KERNEL_OUT_DIR', '/tmp/opencode/kag')
+Path(_KOUT).mkdir(parents=True, exist_ok=True)
+Path(_KOUT + '/kernel.ipynb').write_text(kag)
+print('kernel.ipynb ->', _KOUT + '/kernel.ipynb')
 
 # validar: JSON + cada celda compila
 for name, txt in (('render.ipynb', src), ('kernel.ipynb', kag)):
