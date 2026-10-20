@@ -89,8 +89,7 @@
       23,
       24,
       25,
-      26,
-      27
+      26
     ],
     "retired_from_v9": [
       1,
@@ -121,8 +120,7 @@
       "23": "rows of package cards on a dark interface, one highlighted, clean geometric data visualization, no readable text, no letters",
       "24": "network of connected nodes where only two are highlighted and the rest are dim, isometric, deep blue, no text",
       "25": "a vast field of white points in the dark with a soft unfocused region, sense of the unknown, minimal, no text",
-      "26": "floating numeric counter panels and a document sheet, teal and violet, clean data aesthetic, no readable text, no letters",
-      "27": "a printed report on a dark desk with a seal and a magnifying glass, warm light, cinematic, no readable text"
+      "26": "floating numeric counter panels and a document sheet, teal and violet, clean data aesthetic, no readable text, no letters"
     },
     "style": "dark cinematic cyber security aesthetic, deep navy and black tones, volumetric lighting, ultra detailed, photorealistic, vertical 9:16 composition, no text, no letters, no numbers, no watermark",
     "regenerate_all": true,
