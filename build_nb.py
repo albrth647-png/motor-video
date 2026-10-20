@@ -34,6 +34,7 @@ lecho musical procedural (numpy, sidechain) + cola con fade → QA gate → fast
 
 _CELL1 = """
 import os, subprocess, sys, json, urllib.request, zipfile
+from pathlib import Path
 WORK = Path('/content/motor-video'); OUT = WORK/'out'; FDIR = WORK/'fonts'
 OUT.mkdir(parents=True, exist_ok=True); FDIR.mkdir(parents=True, exist_ok=True)
 
@@ -496,11 +497,73 @@ Path(_KOUT + '/kernel.ipynb').write_text(kag)
 print('kernel.ipynb ->', _KOUT + '/kernel.ipynb')
 
 # validar: JSON + cada celda compila
+def _defined_names(body):
+    """Nombres que la celda DEFINE (asignaciones, imports, def/class)."""
+    import ast as _ast
+    out = set()
+    try:
+        tree = _ast.parse(body)
+    except SyntaxError:
+        return out
+    for node in _ast.walk(tree):
+        if isinstance(node, (_ast.Import, _ast.ImportFrom)):
+            for a in node.names:
+                out.add((a.asname or a.name).split('.')[0])
+        elif isinstance(node, (_ast.FunctionDef, _ast.AsyncFunctionDef, _ast.ClassDef)):
+            out.add(node.name)
+        elif isinstance(node, _ast.Name) and isinstance(node.ctx, _ast.Store):
+            out.add(node.id)
+        elif isinstance(node, _ast.arg):
+            out.add(node.arg)
+        elif isinstance(node, _ast.ExceptHandler) and node.name:
+            out.add(node.name)   # 'except ... as e' define e
+    return out
+
+
+def _used_names(body):
+    """Nombres que la celda LEE (free variables)."""
+    import ast as _ast
+    out = set()
+    try:
+        tree = _ast.parse(body)
+    except SyntaxError:
+        return out
+    for node in _ast.walk(tree):
+        if isinstance(node, _ast.Name) and isinstance(node.ctx, _ast.Load):
+            out.add(node.id)
+    return out
+
+
+import builtins as _builtins
+_BUILTINS = set(dir(_builtins))
+
 for name, txt in (('render.ipynb', src), ('kernel.ipynb', kag)):
     n = json.loads(txt)
+    # 1) sintaxis (como antes)
     for i, c in enumerate(n['cells']):
         if c['cell_type'] == 'code' and not ''.join(c['source']).lstrip().startswith('%'):
             body = '\n'.join(l for l in ''.join(c['source']).splitlines() if not l.strip().startswith('%'))
             compile(body, f'cell{i}', 'exec')
-    print(name, 'OK · celdas:', len(n['cells']))
+    # 2) NOMBRES: una puerta que no bloquea = puerta rota. Un NameError solo se ve
+    #    al ejecutar (y en Kaggle eso es un render de 8 min tirado a la basura).
+    known = set(_BUILTINS)
+    problems = []
+    for i, c in enumerate(n['cells']):
+        if c['cell_type'] != 'code':
+            continue
+        body = '\n'.join(l for l in ''.join(c['source']).splitlines() if not l.strip().startswith('%'))
+        if body.lstrip().startswith('%'):
+            continue
+        defined_here = _defined_names(body)
+        used = _used_names(body)
+        # lo definido en ESTA celda tambn vale (una celda puede usar lo que define)
+        missing = sorted(x for x in used - known - defined_here if not x.startswith('_'))
+        if missing:
+            problems.append((i, missing))
+        known |= defined_here
+    if problems:
+        for i, miss in problems:
+            print('  ERROR celda %d: nombres sin definir -> %s' % (i, ', '.join(miss)))
+        raise SystemExit('ABORT: hay nombres sin definir (NameError en tiempo de ejecucion)')
+    print(name, 'OK · celdas:', len(n['cells']), '· sin nombres sin definir')
 print('escrito: render.ipynb (Colab) + kernel.ipynb (Kaggle)')
