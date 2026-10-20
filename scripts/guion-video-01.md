@@ -12,7 +12,7 @@
 
 | Frase | t (s) | Voz (ES · Tomás −12 %) | Subs (EN karaoke) | Visual (`shotNN`) |
 |---|---|---|---|---|
-| F0 | 0,10 – 4,91 | REA expert services. Auditoria real, con evidencia. | REA expert services. A real audit, with evidence. | `shot19` + **tarjeta intro** (ASS) |
+| F0 | 0,10 – 4,91 | Audit with Proof. Auditoría real, con evidencia. | Audit with Proof. A real audit, with evidence. | `shot19` + **tarjeta intro** (ASS) |
 | F1 | 5,98 – 8,91 | Descubri una falla de seguridad en draw.io. | I found a security flaw in draw.io | `shot01` candado roto · `shot12` grieta |
 | F2 | 9,99 – 14,56 | Y lo peor es que afecta a la version 32.4.1, la actual. | And the worst part it affects version 32.4.1 the current one | `shot02` laptop roja · `shot13` versiones |
 | F3 | 15,60 – 20,36 | En mi auditoria encontre que el modo de incognito no aisla las sesiones como deberia. | In my audit I found incognito mode doesn't isolate sessions like it should | `shot14` lupa · `shot03` escudo · `shot04` máscara · `shot05` ventanas |
@@ -28,8 +28,8 @@
 
 ## Tarjetas (tipografía real ASS — D-VM-04)
 
-- **Intro** (sobre `shot19`, ~0,25–5,21 s): `REA EXPERT SERVICES` · subrayado turquesa · `AUDITORÍA REAL` · `draw.io Desktop 32.4.1` · `con evidencia verificable`.
-- **Endcard** (sobre `shot20`, desde ~42,6 s): `REA EXPERT SERVICES` · `¿TU APP ES ELECTRON?` · `Informe en 48 h · evidencia verificable` · `PARTE 2 · los 3 ajustes` · placa `LINK EN LA BIO` (crece al decir «Link») · fundido de vídeo final 0,7 s.
+- **Intro** (sobre `shot19`, ~0,25–5,21 s): `AUDIT WITH PROOF` · subrayado turquesa · `AUDITORÍA REAL` · `draw.io Desktop 32.4.1` · `con evidencia verificable`.
+- **Endcard** (sobre `shot20`, desde ~42,6 s): `AUDIT WITH PROOF` · `¿TU APP ES ELECTRON?` · `Informe en 48 h · evidencia verificable` · `PARTE 2 · los 3 ajustes` · placa `LINK EN LA BIO` (crece al decir «Link») · fundido de vídeo final 0,7 s.
 
 ## Voz (TTS)
 - **edge-tts** · `es-AR-TomasNeural` · **rate −12 %** · 97 palabras · 47,57 s. (La voz va embebida en el dataset `motor-media`; solo se regenera online.)

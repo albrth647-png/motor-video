@@ -40,7 +40,16 @@
     "voice_id": "es-AR-TomasNeural",
     "rate": "-12%",
     "words": 97,
-    "marks_lastw": ["evidencia", "drawio", "actual", "deberia", "protegido", "solucion", "seguro", "bio"],
+    "marks_lastw": [
+      "evidencia",
+      "drawio",
+      "actual",
+      "deberia",
+      "protegido",
+      "solucion",
+      "seguro",
+      "bio"
+    ],
     "note": "voz embebida en dataset motor-media (voz.mp3 + words.json)"
   },
   "music": {
@@ -63,25 +72,135 @@
   },
   "intro": {
     "over": "shot19",
-    "texts": ["REA EXPERT SERVICES", "AUDITORÍA REAL", "draw.io Desktop 32.4.1", "con evidencia verificable"]
+    "texts": [
+      "AUDIT WITH PROOF",
+      "AUDITORÍA REAL",
+      "draw.io Desktop 32.4.1",
+      "con evidencia verificable"
+    ]
   },
   "endcard": {
     "over": "shot20",
-    "texts": ["REA EXPERT SERVICES", "¿TU APP ES ELECTRON?", "Informe en 48 h · evidencia verificable", "PARTE 2 · los 3 ajustes", "LINK EN LA BIO"],
+    "texts": [
+      "AUDIT WITH PROOF",
+      "¿TU APP ES ELECTRON?",
+      "Informe en 48 h · evidencia verificable",
+      "PARTE 2 · los 3 ajustes",
+      "LINK EN LA BIO"
+    ],
     "video_fade_out_s": 0.7
   },
   "phrases": [
-    { "n": 0, "t": [0.10, 4.91], "shots": [19], "voice_es": "REA expert services. Auditoria real, con evidencia." },
-    { "n": 1, "t": [5.98, 8.91], "shots": [1, 12], "voice_es": "Descubri una falla de seguridad en draw.io." },
-    { "n": 2, "t": [9.99, 14.56], "shots": [2, 13], "voice_es": "Y lo peor es que afecta a la version 32.4.1, la actual." },
-    { "n": 3, "t": [15.60, 20.36], "shots": [14, 3, 4, 5], "voice_es": "En mi auditoria encontre que el modo de incognito no aisla las sesiones como deberia." },
-    { "n": 4, "t": [21.41, 26.69], "shots": [6, 15, 7], "voice_es": "Un atacante podria rastrear los diagramas que abres incluso cuando crees que estas protegido." },
-    { "n": 5, "t": [27.74, 28.76], "shots": [8], "voice_es": "Pero hay solucion." },
-    { "n": 6, "t": [29.82, 35.67], "shots": [9, 16, 10, 17], "voice_es": "Con tres ajustes de configuracion podes cerrar esa puerta y dejar tu draw.io realmente seguro." },
-    { "n": 7, "t": [36.70, 46.46], "shots": [18, 11, 20], "voice_es": "En la parte dos te muestro los tres ajustes. ¿Tu app es Electron? Te la audito con esta misma evidencia. Link en la bio." }
+    {
+      "n": 0,
+      "t": [
+        0.1,
+        4.91
+      ],
+      "shots": [
+        19
+      ],
+      "voice_es": "Audit with Proof. Auditoría real, con evidencia."
+    },
+    {
+      "n": 1,
+      "t": [
+        5.98,
+        8.91
+      ],
+      "shots": [
+        1,
+        12
+      ],
+      "voice_es": "Descubri una falla de seguridad en draw.io."
+    },
+    {
+      "n": 2,
+      "t": [
+        9.99,
+        14.56
+      ],
+      "shots": [
+        2,
+        13
+      ],
+      "voice_es": "Y lo peor es que afecta a la version 32.4.1, la actual."
+    },
+    {
+      "n": 3,
+      "t": [
+        15.6,
+        20.36
+      ],
+      "shots": [
+        14,
+        3,
+        4,
+        5
+      ],
+      "voice_es": "En mi auditoria encontre que el modo de incognito no aisla las sesiones como deberia."
+    },
+    {
+      "n": 4,
+      "t": [
+        21.41,
+        26.69
+      ],
+      "shots": [
+        6,
+        15,
+        7
+      ],
+      "voice_es": "Un atacante podria rastrear los diagramas que abres incluso cuando crees que estas protegido."
+    },
+    {
+      "n": 5,
+      "t": [
+        27.74,
+        28.76
+      ],
+      "shots": [
+        8
+      ],
+      "voice_es": "Pero hay solucion."
+    },
+    {
+      "n": 6,
+      "t": [
+        29.82,
+        35.67
+      ],
+      "shots": [
+        9,
+        16,
+        10,
+        17
+      ],
+      "voice_es": "Con tres ajustes de configuracion podes cerrar esa puerta y dejar tu draw.io realmente seguro."
+    },
+    {
+      "n": 7,
+      "t": [
+        36.7,
+        46.46
+      ],
+      "shots": [
+        18,
+        11,
+        20
+      ],
+      "voice_es": "En la parte dos te muestro los tres ajustes. ¿Tu app es Electron? Te la audito con esta misma evidencia. Link en la bio."
+    }
   ],
   "qa": {
-    "checks": ["1080x1920", "dur == total ±0.5", "h264+aac", "faststart", "LUFS en [-16,-13] (ebur128, ULTIMO match)", "fotogramas revisados"],
+    "checks": [
+      "1080x1920",
+      "dur == total ±0.5",
+      "h264+aac",
+      "faststart",
+      "LUFS en [-16,-13] (ebur128, ULTIMO match)",
+      "fotogramas revisados"
+    ],
     "kernel_result": "PASS (kernel v9 · lufs -14.8)"
   },
   "delivery": {

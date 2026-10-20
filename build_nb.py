@@ -68,7 +68,7 @@ print('imagenes IA:', NIMG, 'en', IMGDIR)
 
 # --- PLAN de 20 planos (la imagen MANDA): (imagen, frase 0-7, peso del tramo) ---
 PLAN = [
- (19, 0, 1.00),  # intro (nueva)         "REA expert services. Auditoria real, con evidencia"
+ (19, 0, 1.00),  # intro (nueva)         "Audit with Proof. Auditoría real, con evidencia"
  ( 1, 1, 1.00),  # candado roto          "Descubri una falla..."
  (12, 1, 0.90),  # grieta en el diagrama "una falla de seguridad en draw.io"
  ( 2, 2, 1.00),  # laptop roja           "Y lo peor es que afecta"
@@ -94,7 +94,7 @@ if _missing: raise SystemExit('faltan imagenes del plan: %s' % _missing)
 print('PLAN OK ·', len(PLAN), 'planos para 8 frases')
 
 VOZ = 'es-AR-TomasNeural'   # voz masculina rioplatense (encaja con el "podes" del guion)
-TEXTO = ('REA expert services. Auditoria real, con evidencia. '
+TEXTO = ('Audit with Proof. Auditoría real, con evidencia. '
  'Descubri una falla de seguridad en draw.io. Y lo peor es que afecta a la version 32.4.1, la actual. '
  'En mi auditoria encontre que el modo de incognito no aisla las sesiones como deberia. '
  'Un atacante podria rastrear los diagramas que abres incluso cuando crees que estas protegido. '
@@ -211,7 +211,7 @@ ev_bg, ev_fg = [], []
 _i_end = spans[0][1] + 0.30
 ev_bg.append(_d(0.20, _i_end, 'Scrim', _scrim('BA', 400, 350)))
 ev_fg.append(_d(0.62, _i_end, 'Bar', _grp('p1','an5','pos(540,700)','bord0','shad0','fad(160,230)') + 'm 0 0 l 320 0 l 320 7 l 0 7' + _grp('p0')))
-ev_fg.append(_d(0.25, _i_end, 'Brand', _grp('fad(280,240)','move(540,678,540,650,0,420)') + 'REA EXPERT SERVICES'))
+ev_fg.append(_d(0.25, _i_end, 'Brand', _grp('fad(280,240)','move(540,678,540,650,0,420)') + 'AUDIT WITH PROOF'))
 ev_fg.append(_d(0.50, _i_end, 'Title', _grp('fad(300,240)','pos(540,815)','fscx92','fscy92','t(0,460,'+BS+'fscx100'+BS+'fscy100)') + 'AUDITORÍA REAL'))
 ev_fg.append(_d(0.80, _i_end, 'Sub', _grp('fad(320,240)','move(540,952,540,935,0,380)') + 'draw.io Desktop 32.4.1'))
 ev_fg.append(_d(1.05, _i_end, 'Sub', _grp('fad(320,240)','move(540,1022,540,1005,0,380)') + 'con evidencia verificable'))
@@ -220,7 +220,7 @@ _t_link = next((w['t0'] for w in words if _norm(w['w']) == 'link'), None)
 if _ei:
     t_e = SHOTS[_ei[0]][1] + 0.15
     ev_bg.append(_d(t_e - 0.15, TOTAL, 'Scrim', _scrim('BA', 420, 320)))
-    ev_fg.append(_d(t_e + 0.20, TOTAL, 'Brand', _grp('fad(280,400)','move(540,668,540,640,0,420)') + 'REA EXPERT SERVICES'))
+    ev_fg.append(_d(t_e + 0.20, TOTAL, 'Brand', _grp('fad(280,400)','move(540,668,540,640,0,420)') + 'AUDIT WITH PROOF'))
     ev_fg.append(_d(t_e + 0.40, TOTAL, 'Title', _grp('fad(300,400)','pos(540,830)','fscx92','fscy92','t(0,460,'+BS+'fscx100'+BS+'fscy100)') + '¿TU APP ES ELECTRON?'))
     ev_fg.append(_d(t_e + 0.65, TOTAL, 'Sub', _ov('Informe en 48 h · evidencia verificable', 990, 420, 400)))
     ev_fg.append(_d(t_e + 0.85, TOTAL, 'Sub', _ov('PARTE 2 · los 3 ajustes', 1065, 420, 400)))
