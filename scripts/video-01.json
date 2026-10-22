@@ -3,9 +3,9 @@
   "title": "Desarmé draw.io con IA gratis",
   "version": "v10",
   "status": {
-    "approved": false,
+    "approved": true,
     "date": "2026-10-20",
-    "verdict": "QA PASS (2026-10-20) · PENDIENTE del veredicto visual del operador antes de publicar",
+    "verdict": "QA PASS (2026-10-20) · veredicto visual OK (6 fotogramas revisados) · PUBLICADA el 2026-10-22 en YouTube (sV_iV92-Ad0, a mano desde la app)",
     "look": "CONGELADO (SPEC v1.2/v1.4) — el v10 cambia SOLO el contenido, no el look",
     "change": "v9 -> v10: hook HONESTO. El v9 afirmaba una vulnerabilidad que oferta/informe-muestra.md REFUTA (§1: 'Sin hallazgos criticos', 0 CVEs) y que la auditoria nunca examinó ('modo de incognito' no aparece en el informe). El v10 cuenta la historia real: 0 vulnerabilidades + lo que no se pudo saber.",
     "frozen_versions": [
@@ -13,8 +13,8 @@
     ],
     "source_of_truth": "build_nb.py → kernel.ipynb (Kaggle) / render.ipynb (Colab); receta: ITERACIONES.md",
     "publication": {
-      "publishable": false,
-      "reason": "Pide el render del v10 + QA-gate + el veredicto del operador. Hasta entonces no se sube a ningun canal.",
+      "publishable": true,
+      "reason": "Render v10 hecho en Kaggle (run 39498002065, kernel COMPLETE, QA PASS: 1080x1920, 52,6 s, LUFS -14,9) y publicado el 2026-10-22 -> https://www.youtube.com/shorts/sV_iV92-Ad0",
       "ref": "investigacion/INFORME-REDES-2026.md §6"
     }
   },
@@ -124,7 +124,7 @@
     },
     "style": "dark cinematic cyber security aesthetic, deep navy and black tones, volumetric lighting, ultra detailed, photorealistic, vertical 9:16 composition, no text, no letters, no numbers, no watermark",
     "regenerate_all": true,
-    "why_regenerate_all": "El pipeline tiene que ser REPRODUCIBLE y no depender del historial del dataset: se regeneran las 17 imagenes en CI con los MISMOS prompts del v9 (mismo estilo), asi que no hace falta bajar la version anterior del dataset (0 MB en el movil) y el dataset nunca queda a medias."
+    "why_regenerate_all": "El pipeline tiene que ser REPRODUCIBLE y no depender del historial del dataset: se regeneran las 16 imagenes en CI con los MISMOS prompts del v9 (mismo estilo), asi que no hace falta bajar la version anterior del dataset (0 MB en el movil) y el dataset nunca queda a medias."
   },
   "intro": {
     "over": "shot19",

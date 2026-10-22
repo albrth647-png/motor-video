@@ -80,7 +80,7 @@ print('imagenes IA:', NIMG, 'en', IMGDIR)
 
 # --- PLAN de 16 planos (la imagen MANDA): (imagen, frase 0-7, peso del tramo) ---
 # v10: hook HONESTO. Se reutilizan 10 imagenes del dataset motor-media y se anaden
-#      7 nuevas (shot21..shot27) con otro significado. Las imagenes del v9 (candado
+#      6 nuevas (shot21..shot26) con otro significado. Las imagenes del v9 (candado
 #      roto, escudo agrietado, mascara de incognito, atacante, ojo rastreador,
 #      grieta) YA NO SE USAN: el v9 afirmaba una vulnerabilidad que el informe
 #      refuta. Ver investigacion/INFORME-REDES-2026.md sec.6.

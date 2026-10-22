@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 MAX_DUR = 60
-MIN_DUR = 20  # piso anti-truncado (short congelado v8 = 49,07 s; SPEC v1.2)
+MIN_DUR = 20  # piso anti-truncado (short vigente v10 = 52,6 s; SPEC v1.5)
 LUFS_TARGET = -14
 LUFS_TOL = 1.0
 W, H, FPS = 1080, 1920, 30
