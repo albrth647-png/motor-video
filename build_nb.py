@@ -25,6 +25,13 @@ _ENDTX = (_SPEC.get('endcard') or {}).get('texts') or ['AUDIT WITH PROOF', '¿TU
 _LINKTXT = (_SPEC.get('endcard') or {}).get('link_text', 'LINK EN LA BIO')
 _PLAN = _SPEC.get('plan')
 _INTRO_DUR = (_SPEC.get('intro') or {}).get('dur_s')   # None = hasta el fin de la frase 0
+_IMGS = _SPEC.get('images') or {}
+_CARDS = _IMGS.get('mode') == 'cards'        # tarjetas 1080x1920 ya compuestas: sin ESRGAN ni regrado
+_ZI = _IMGS.get('zoom') or [1.12, 1.16, 1.14, 1.18]
+_GRADE = '' if _CARDS else ',eq=contrast=1.05:saturation=1.10:brightness=0.004,vignette=PI/4.8'
+_FONT = ((_SPEC.get('subtitles') or {}).get('font') or 'Poppins').replace(' Bold', '')
+_CAPMV = int((_SPEC.get('subtitles') or {}).get('margin_v', 300))     # 300 = v10 · 450 = franja libre de las tarjetas
+_LINKY = int((_SPEC.get('endcard') or {}).get('link_y', 1300))
 _KW_DEF = ('34','MILLION','PACKAGES','VULNERABILITIES','ACTIVE','WINDOWS','DYNAMIC','VERIFIED',
            'HANDLERS','TWO','SENDER','VALIDATION','COULDN','92,468','UNKNOWNS','LIMITS',
            'EVIDENCE','AUDIT','ELECTRON','32.4.1')
@@ -34,19 +41,23 @@ _RATE = _SPEC['voice']['rate']
 _TEXT = ' '.join(p['voice_es'] for p in _SPEC['phrases'])
 print('spec:', _VOICE, _RATE, '·', len(_TEXT.split()), 'palabras ·', len(_SPEC['phrases']), 'frases')
 
-md("""# motor-video · Video 01 v10 — 16 planos, hook HONESTO (0 vulnerabilidades + lo que no se pudo saber)
+_TITLE = _SPEC.get('title') or 'Video 01 v10'
+_NPLAN = len(_SPEC.get('plan') or [])
+_SUF = (' — %d planos' % _NPLAN) if _NPLAN else ' — 16 planos (plan por defecto)'
+_NPLAN_TXT = ('%d planos' % _NPLAN) if _NPLAN else '16 planos'
+_IMGTXT = ('tarjetas de evidencia 1080x1920 ya compuestas (modo cards: sin ESRGAN, sin regrado, zoom suave)'
+           if _CARDS else 'imagenes IA (FLUX) -> 9:16 -> upscale x4')
+md(f"""# motor-video · {_TITLE}{_SUF}
 
-**Las imagenes mandan**: cada plano es una imagen IA que ilustra lo que dice la voz en ese tramo.
-16 planos (10 reutilizados del dataset + 7 nuevos shot21..shot27), cortes duros ~1.5-2.2s (ritmo Shorts),
-narrativa de color: turquesa marca → verde = 0 activos → naranja = atencion → violeta = lo desconocido → turquesa = transparencia.
-Tipografia REAL para intro/CTA en ASS (D-VM-04: la IA nunca dibuja texto) + animaciones ASS
+**Las imagenes mandan**: cada plano ilustra lo que dice la voz en ese tramo.
+{_NPLAN_TXT}, cortes duros (ritmo Shorts), narrativa de color de marca.
+Tipografia REAL en ASS (D-VM-04: la IA nunca dibuja texto) + animaciones ASS
 (scrim, subrayado, entradas) y **lecho musical sintetizado en el runner** (numpy, sin descargas ni licencias)
 mezclado con sidechain bajo la voz + cola final con fade.
 Subtitulos **EN karaoke** palabra a palabra (el audio queda en espanol — SPEC D-VM-06).
 
-Pipeline: 20 imagenes FLUX (dataset motor-media) → crop 9:16 → upscale x4 → Ken Burns sin temblor →
-grading + vineta → scrim + intro animada (subrayado) + subtitulos EN + endcard CTA (placa) → voz Tomas (-12%) +
-lecho musical procedural (numpy, sidechain) + cola con fade → QA gate → faststart. Sin GPU, sin internet, sin datos extra.
+Pipeline: {_IMGTXT} -> Ken Burns sin temblor -> scrim + intro animada + subtitulos EN + endcard CTA ->
+voz ({_VOICE} {_RATE}) + lecho procedural (numpy, sidechain) + cola con fade -> QA gate -> faststart. Sin GPU, sin internet, sin datos extra.
 """)
 
 _CELL1 = """
@@ -190,7 +201,7 @@ for si in range(len(spans)):
     rng.append((s0, s1))
 
 # --- SHOTS: reparto del tramo de cada frase entre sus planos (por peso) ---
-ZI = [1.12, 1.16, 1.14, 1.18]
+ZI = __ZI__
 SHOTS = []
 for si in range(len(spans)):
     s0, s1 = rng[si]
@@ -273,6 +284,9 @@ ass_lines = ['[Script Info]', 'ScriptType: v4.00+', 'PlayResX: 1080', 'PlayResY:
  '[Events]', 'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text']
 ev = ev_bg + ev + ev_fg   # scrims al fondo (detras de caps) · intro/CTA encima
 ass = chr(10).join(ass_lines + ev) + chr(10)
+ass = ass.replace(',Poppins,', ',' + __FONT__ + ',')   # misma familia que las tarjetas (coherencia de marca)
+ass = ass.replace(',90,90,300,1', ',90,90,' + str(__CAPMV__) + ',1')   # altura del karaoke
+ass = ass.replace('pos(540,1300)', 'pos(540,' + str(__LINKY__) + ')')  # pildora del endcard
 (OUT/'cap.ass').write_text(ass)
 print('cap.ass EN OK ·', len(ev), 'dialogos ·', len(spans), 'frases · v8 scrim+anims+placa · TOTAL', round(TOTAL,2), 's')
 """)
@@ -362,6 +376,9 @@ if MODEL:
         import onnxruntime as ort
         so = ort.SessionOptions(); so.intra_op_num_threads = max(2, (os.cpu_count() or 4)//2)
         sess = ort.InferenceSession(MODEL, so, providers=['CPUExecutionProvider'])
+        if __CARDS__:
+            sess = None
+            print('modo tarjetas: sin ESRGAN (las imagenes YA son 1080x1920 nitidas)')
         print('Real-ESRGAN x4 listo ·', round(os.path.getsize(MODEL)/1e6,1), 'MB · hilos', so.intra_op_num_threads)
     except Exception as e:
         print('onnxruntime no disponible -> fallback Lanczos:', str(e)[:100])
@@ -412,12 +429,13 @@ code("""
 # --- plano a plano: Ken Burns sin temblor (buffer 2160x3840) + grading + cortes duros ---
 import subprocess
 W,H,FPS=1080,1920,30
+GRADE = __GRADE__          # regrado del v10 en imagenes IA; vacio en modo tarjetas (look aprobado, sin tocar)
 def shot(idx, ds, Z, mode, name):
     N = max(int(round(ds*FPS)), 2)
     ease = '(1-cos(PI*on/%d))/2' % (N-1)
     zexpr = ('1+%s*%s' % (round(Z-1,4), ease)) if mode=='in' else ('%s-%s*%s' % (Z, round(Z-1,4), ease))
     filt = ("zoompan=z='%s':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=%dx%d:fps=30,"
-            'format=yuv420p,eq=contrast=1.05:saturation=1.10:brightness=0.004,vignette=PI/4.8') % (zexpr, W, H)
+            'format=yuv420p' + GRADE) % (zexpr, W, H)
     r = subprocess.run(['ffmpeg','-y','-loop','1','-framerate','30','-i',str(OUT/('up_%02d.png'%idx)),
         '-filter_complex',filt,'-t',str(ds),'-r','30','-c:v','libx264','-crf','19','-preset','medium',
         '-pix_fmt','yuv420p','-an',str(OUT/('s_%s.mp4'%name))],capture_output=True,text=True)
@@ -505,6 +523,12 @@ for _c in cells:
             '__INTRO_S1__': repr(_INTRO[2] if len(_INTRO) > 2 else ''),
             '__INTRO_S2__': repr(_INTRO[3] if len(_INTRO) > 3 else ''),
             '__INTRO_DUR__': repr(_INTRO_DUR),
+            '__CARDS__': repr(bool(_CARDS)),
+            '__ZI__': repr(list(_ZI)),
+            '__GRADE__': repr(_GRADE),
+            '__FONT__': repr(_FONT),
+            '__CAPMV__': repr(_CAPMV),
+            '__LINKY__': repr(_LINKY),
             '__END_T__': repr(_ENDTX[1] if len(_ENDTX) > 1 else ''),
             '__END_S1__': repr(_ENDTX[2] if len(_ENDTX) > 2 else ''),
             '__END_S2__': repr(_ENDTX[3] if len(_ENDTX) > 3 else ''),

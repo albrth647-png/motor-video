@@ -1,6 +1,6 @@
 {
  "id": "video-02",
- "title": "Parte 2: lo que no se pudo saber (draw.io 32.4.1)",
+ "title": "Video 02 · Parte 2 — lo que no se pudo saber",
  "version": "v1",
  "status": {
   "approved": false,
@@ -64,10 +64,10 @@
   "language": "en",
   "mode": "karaoke",
   "format": "ass",
-  "font": "Poppins Bold",
+  "font": "DejaVu Sans",
   "fontsize": 74,
   "outline": 5,
-  "margin_v": 300,
+  "margin_v": 450,
   "keywords": [
    "PART",
    "NOTHING",
@@ -107,7 +107,14 @@
    "41": "endcard (fondo, sin texto)",
    "42": "13-app-drawio (captura REAL de draw.io Desktop corriendo)",
    "43": "portada (fondo, sin texto)"
-  }
+  },
+  "mode": "cards",
+  "zoom": [
+   1.04,
+   1.05,
+   1.045,
+   1.06
+  ]
  },
  "intro": {
   "over": "shot43",
@@ -128,7 +135,8 @@
    "La parte 1 está en el canal"
   ],
   "link_text": "LINK EN EL PERFIL",
-  "video_fade_out_s": 0.7
+  "video_fade_out_s": 0.7,
+  "link_y": 1240
  },
  "plan": [
   [
