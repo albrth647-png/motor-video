@@ -11,7 +11,24 @@ def code(s): cells.append({"cell_type":"code","execution_count":None,"metadata":
 # si el guion cambia, cambian los dos a la vez -> no se pueden desincronizar.
 import json as _json
 _ENGINE_DIR = Path(__file__).resolve().parent
-_SPEC = _json.loads((_ENGINE_DIR / 'scripts' / 'video-01.json').read_text(encoding='utf-8'))
+import os as _os
+_SPEC_NAME = _os.environ.get('REA_SPEC') or 'video-01.json'   # video-01.json (v10, congelado) | video-02.json
+_SPEC = _json.loads((_ENGINE_DIR / 'scripts' / _SPEC_NAME).read_text(encoding='utf-8'))
+_VID = _SPEC.get('id', 'video-01')                            # nombre de salida: <id>.mp4 / qa-<id>.json
+_ENDSHOT = str((_SPEC.get('endcard') or {}).get('over', 'shot20')).replace('shot', '')
+_END_IMG = int(_ENDSHOT) if _ENDSHOT.isdigit() else 20
+_INTRO = (_SPEC.get('intro') or {}).get('texts') or ['AUDIT WITH PROOF', '0 VULNERABILIDADES',
+                                                     'draw.io Desktop 32.4.1', 'y lo que no se pudo saber']
+_ENDTX = (_SPEC.get('endcard') or {}).get('texts') or ['AUDIT WITH PROOF', '¿TU APP ES ELECTRON?',
+                                                       'Informe en 48 h · evidencia verificable',
+                                                       'PARTE 2 · lo que no se pudo saber']
+_LINKTXT = (_SPEC.get('endcard') or {}).get('link_text', 'LINK EN LA BIO')
+_PLAN = _SPEC.get('plan')
+_INTRO_DUR = (_SPEC.get('intro') or {}).get('dur_s')   # None = hasta el fin de la frase 0
+_KW_DEF = ('34','MILLION','PACKAGES','VULNERABILITIES','ACTIVE','WINDOWS','DYNAMIC','VERIFIED',
+           'HANDLERS','TWO','SENDER','VALIDATION','COULDN','92,468','UNKNOWNS','LIMITS',
+           'EVIDENCE','AUDIT','ELECTRON','32.4.1')
+_PAL_DEF = ['0x8fe3cf','0x8fe3cf','0x4ade80','0xff7a3a','0x9aa4ff','0xc9a0ff','0x8fe3cf']
 _VOICE = _SPEC['voice']['voice_id']
 _RATE = _SPEC['voice']['rate']
 _TEXT = ' '.join(p['voice_es'] for p in _SPEC['phrases'])
@@ -84,24 +101,29 @@ print('imagenes IA:', NIMG, 'en', IMGDIR)
 #      roto, escudo agrietado, mascara de incognito, atacante, ojo rastreador,
 #      grieta) YA NO SE USAN: el v9 afirmaba una vulnerabilidad que el informe
 #      refuta. Ver investigacion/INFORME-REDES-2026.md sec.6.
-PLAN = [
-  (19, 0, 1.00),  # intro (estudio + codigo holografico) "Auditamos draw.io"
-  (14, 0, 0.90),  # lupa de auditoria             "...y no encontramos ninguna vulnerabilidad"
-  (21, 1, 1.00),  # NUEVO grafo de nodos          "34 MB de JavaScript, 3M de nodos"
-  (13, 2, 1.00),  # versiones en fila            "El inventario dio 82 paquetes"
-  (23, 2, 0.90),  # NUEVO tarjetas de paquetes   "...de cinco candidatas, ninguna activa"
-  (22, 3, 1.00),  # NUEVO panel de codigo borroso"5 ventanas, 1 dinamica: no verificable"
-  (24, 4, 1.00),  # NUEVO red de nodos (2 vivos)  "29 handlers de IPC, solo 2 con validacion"
-  (25, 5, 1.00),  # NUEVO mar de puntos          "lo que no se pudo saber"
-  (26, 6, 1.00),  # NUEVO contadores              "92.468 desconocidos con su ID"
-  (16, 6, 0.80),  # candado verde                 "...y diez limites declarados"
-  (17, 6, 0.80),  # cubo protegido
-  (20, 7, 1.00),  # endcard                       "Si tu app es Electron, auditala"
-  ( 9, 7, 0.70),  # 3 ajustes
-  (10, 7, 0.70),  # laptop segura
-  ( 8, 7, 0.60),  # boveda turquesa
-  (11, 7, 0.60),  # fondo CTA
-]
+PLAN_SPEC = __PLAN__
+if PLAN_SPEC:
+    PLAN = [(int(_p[0]), int(_p[1]), float(_p[2])) for _p in PLAN_SPEC]
+    print('PLAN del spec:', len(PLAN), 'planos')
+else:
+    PLAN = [
+      (19, 0, 1.00),  # intro (estudio + codigo holografico) "Auditamos draw.io"
+      (14, 0, 0.90),  # lupa de auditoria             "...y no encontramos ninguna vulnerabilidad"
+      (21, 1, 1.00),  # NUEVO grafo de nodos          "34 MB de JavaScript, 3M de nodos"
+      (13, 2, 1.00),  # versiones en fila            "El inventario dio 82 paquetes"
+      (23, 2, 0.90),  # NUEVO tarjetas de paquetes   "...de cinco candidatas, ninguna activa"
+      (22, 3, 1.00),  # NUEVO panel de codigo borroso"5 ventanas, 1 dinamica: no verificable"
+      (24, 4, 1.00),  # NUEVO red de nodos (2 vivos)  "29 handlers de IPC, solo 2 con validacion"
+      (25, 5, 1.00),  # NUEVO mar de puntos          "lo que no se pudo saber"
+      (26, 6, 1.00),  # NUEVO contadores              "92.468 desconocidos con su ID"
+      (16, 6, 0.80),  # candado verde                 "...y diez limites declarados"
+      (17, 6, 0.80),  # cubo protegido
+      (20, 7, 1.00),  # endcard                       "Si tu app es Electron, auditala"
+      ( 9, 7, 0.70),  # 3 ajustes
+      (10, 7, 0.70),  # laptop segura
+      ( 8, 7, 0.60),  # boveda turquesa
+      (11, 7, 0.60),  # fondo CTA
+    ]
 _missing = [i for i,_s,_w in PLAN if not (IMGDIR/('shot%02d.jpg'%i)).exists()]
 if _missing: raise SystemExit('faltan imagenes del plan: %s' % _missing)
 print('PLAN OK ·', len(PLAN), 'planos para 8 frases')
@@ -149,7 +171,7 @@ import unicodedata
 def _norm(w):
     w = unicodedata.normalize('NFD', w.lower())
     return ''.join(c for c in w if c.isalnum())
-LASTW = ['vulnerabilidad','nodos','activa','verificar','origen','saber','declarados','evidencia']
+LASTW = __LASTW__
 bnd, _pos = [], 0
 for _lw in LASTW:
     _f = next((i for i in range(_pos, len(words)) if _norm(words[i]['w'])==_lw), None)
@@ -183,20 +205,12 @@ print('SHOTS:', len(SHOTS), 'planos · fin', SHOTS[-1][2], 's · duraciones', [r
 for _s in SHOTS: print('  img%02d %5.2f-%5.2f %s' % (_s[0], _s[1], _s[2], _s[3]))
 
 # --- acento de color por tramo (narrativa rojo -> turquesa, alineada a las frases) ---
-ACC = [(spans[0][1],'0x8fe3cf'), (spans[1][1],'0x8fe3cf'), (spans[2][1],'0x4ade80'), (spans[3][1],'0xff7a3a'), (spans[4][1],'0x9aa4ff'), (spans[5][1],'0xc9a0ff'), (spans[6][1],'0x8fe3cf'), (10**9,'0x8fe3cf')]
+_PAL = __PAL__
+ACC = [(spans[_i][1], _PAL[_i % len(_PAL)]) for _i in range(len(spans)-1)] + [(10**9, _PAL[-1])]
 
 # --- subtitulos EN karaoke palabra a palabra (audio ES — SPEC D-VM-06) ---
-EN = [
- ['We','audited','draw.io','Desktop.','And','found','no','vulnerability.'],
- ['34','megabytes','of','JavaScript.','Over','3','million','nodes.'],
- ['82','packages.','Five','candidate','vulnerabilities,','none','active.'],
- ['Five','windows.','One','is','dynamic','and',"can't",'be','verified.'],
- ['29','IPC','handlers.','Only','two','with','sender','validation.'],
- ['What','matters','is','what','we',"couldn't",'know.'],
- ['92,468','unknowns,','each','with','its','ID.','Ten','declared','limits.'],
- ['If','your','app','is','Electron,','audit','it.','48','hours,','with','evidence.'],
-]
-KW = ('34','MILLION','PACKAGES','VULNERABILITIES','ACTIVE','WINDOWS','DYNAMIC','VERIFIED','HANDLERS','TWO','SENDER','VALIDATION','COULDN','92,468','UNKNOWNS','LIMITS','EVIDENCE','AUDIT','ELECTRON','32.4.1')
+EN = __EN__
+KW = __KW__
 def hex2ass(h):  # '0xRRGGBB' -> '&H00BBGGRR&' (BGR de ASS)
     r,g,b = h[2:4], h[4:6], h[6:8]
     return ('&H00%s%s%s&' % (b,g,r)).upper()
@@ -226,25 +240,26 @@ def _ov(txt, y, fad_in=450, fad_out=300):
 def _scrim(a='BA', fi=400, fo=350):
     return _grp('p1','an7','pos(0,0)','bord0','shad0','1c&H000000&','alpha&H%s&' % a,'fad(%d,%d)' % (fi, fo)) + 'm 0 0 l 1080 0 l 1080 1920 l 0 1920' + _grp('p0')
 ev_bg, ev_fg = [], []
-_i_end = spans[0][1] + 0.30
+_i_end = __INTRO_DUR__
+if not _i_end: _i_end = spans[0][1] + 0.30
 ev_bg.append(_d(0.20, _i_end, 'Scrim', _scrim('BA', 400, 350)))
 ev_fg.append(_d(0.62, _i_end, 'Bar', _grp('p1','an5','pos(540,700)','bord0','shad0','fad(160,230)') + 'm 0 0 l 320 0 l 320 7 l 0 7' + _grp('p0')))
 ev_fg.append(_d(0.25, _i_end, 'Brand', _grp('fad(280,240)','move(540,678,540,650,0,420)') + 'AUDIT WITH PROOF'))
-ev_fg.append(_d(0.50, _i_end, 'Title', _grp('fad(300,240)','pos(540,815)','fscx92','fscy92','t(0,460,'+BS+'fscx100'+BS+'fscy100)') + '0 VULNERABILIDADES'))
-ev_fg.append(_d(0.80, _i_end, 'Sub', _grp('fad(320,240)','move(540,952,540,935,0,380)') + 'draw.io Desktop 32.4.1'))
-ev_fg.append(_d(1.05, _i_end, 'Sub', _grp('fad(320,240)','move(540,1022,540,1005,0,380)') + 'y lo que no se pudo saber'))
-_ei = [i for i, s in enumerate(SHOTS) if s[0] == 20]
+ev_fg.append(_d(0.50, _i_end, 'Title', _grp('fad(300,240)','pos(540,815)','fscx92','fscy92','t(0,460,'+BS+'fscx100'+BS+'fscy100)') + __INTRO_T__))
+ev_fg.append(_d(0.80, _i_end, 'Sub', _grp('fad(320,240)','move(540,952,540,935,0,380)') + __INTRO_S1__))
+ev_fg.append(_d(1.05, _i_end, 'Sub', _grp('fad(320,240)','move(540,1022,540,1005,0,380)') + __INTRO_S2__))
+_ei = [i for i, s in enumerate(SHOTS) if s[0] == __ENDIMG__]
 _t_link = next((w['t0'] for w in words if _norm(w['w']) == 'link'), None)
 if _ei:
     t_e = SHOTS[_ei[0]][1] + 0.15
     ev_bg.append(_d(t_e - 0.15, TOTAL, 'Scrim', _scrim('BA', 420, 320)))
     ev_fg.append(_d(t_e + 0.20, TOTAL, 'Brand', _grp('fad(280,400)','move(540,668,540,640,0,420)') + 'AUDIT WITH PROOF'))
-    ev_fg.append(_d(t_e + 0.40, TOTAL, 'Title', _grp('fad(300,400)','pos(540,830)','fscx92','fscy92','t(0,460,'+BS+'fscx100'+BS+'fscy100)') + '¿TU APP ES ELECTRON?'))
-    ev_fg.append(_d(t_e + 0.65, TOTAL, 'Sub', _ov('Informe en 48 h · evidencia verificable', 990, 420, 400)))
-    ev_fg.append(_d(t_e + 0.85, TOTAL, 'Sub', _ov('PARTE 2 · lo que no se pudo saber', 1065, 420, 400)))
+    ev_fg.append(_d(t_e + 0.40, TOTAL, 'Title', _grp('fad(300,400)','pos(540,830)','fscx92','fscy92','t(0,460,'+BS+'fscx100'+BS+'fscy100)') + __END_T__))
+    ev_fg.append(_d(t_e + 0.65, TOTAL, 'Sub', _ov(__END_S1__, 990, 420, 400)))
+    ev_fg.append(_d(t_e + 0.85, TOTAL, 'Sub', _ov(__END_S2__, 1065, 420, 400)))
     t0l = max(t_e + 0.25, (_t_link - 0.20) if _t_link is not None else t_e + 1.1)
     ev_fg.append(_d(t0l - 0.15, TOTAL, 'Bar', _grp('p1','an5','pos(540,1300)','fad(160,420)','1c&H141414&','alpha&H28&','bord0','shad0') + 'm 0 0 l 520 0 l 520 112 l 0 112' + _grp('p0')))
-    ev_fg.append(_d(t0l, TOTAL, 'Link', _grp('fad(300,420)','pos(540,1300)','t(160,700,'+BS+'fscx108'+BS+'fscy108)') + 'LINK EN LA BIO'))
+    ev_fg.append(_d(t0l, TOTAL, 'Link', _grp('fad(300,420)','pos(540,1300)','t(160,700,'+BS+'fscx108'+BS+'fscy108)') + __LINKTXT__))
 ass_lines = ['[Script Info]', 'ScriptType: v4.00+', 'PlayResX: 1080', 'PlayResY: 1920',
  'WrapStyle: 2', 'ScaledBorderAndShadow: yes', '[V4+ Styles]',
  'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
@@ -267,7 +282,7 @@ code("""
 # Sin descargas ni licencias (R1/SPEC): se sintetiza aqui, clavado a la narrativa:
 #   intro (pad suave) -> tension (Am-F-Dm-E) -> solucion (C-G-Am-F) -> cierre (C + fade).
 import numpy as np, wave as _wv
-_ei2 = [i for i, s in enumerate(SHOTS) if s[0] == 20]
+_ei2 = [i for i, s in enumerate(SHOTS) if s[0] == __ENDIMG__]
 t_e = SHOTS[_ei2[0]][1] + 0.15
 SRM = 44100
 NM = int(SRM * TOTAL)
@@ -440,16 +455,16 @@ _an = subprocess.run(['ffmpeg','-i',str(mixw),'-af','loudnorm=I=-14:TP=-1.5:prin
 _M = json.loads(_an[_an.rfind('{'):_an.rfind('}')+1])
 _ln = ('loudnorm=I=-14:TP=-1.5:measured_I=%s:measured_TP=%s:measured_LRA=%s:measured_thresh=%s:offset=%s:linear=true' %
        (_M['input_i'], _M['input_tp'], _M['input_lra'], _M['input_thresh'], _M['target_offset']))
-r = subprocess.run(['ffmpeg','-y','-i',str(cap),'-i',str(mixw),'-filter_complex','[1:a]%s,afade=t=out:st=%.2f:d=1.2[a]' % (_ln, TOTAL-1.4),'-map','0:v:0','-map','[a]','-c:v','copy','-c:a','aac','-b:a','192k','-t',str(TOTAL),'-movflags','+faststart',str(OUT/'video-01.mp4')],capture_output=True,text=True)
+r = subprocess.run(['ffmpeg','-y','-i',str(cap),'-i',str(mixw),'-filter_complex','[1:a]%s,afade=t=out:st=%.2f:d=1.2[a]' % (_ln, TOTAL-1.4),'-map','0:v:0','-map','[a]','-c:v','copy','-c:a','aac','-b:a','192k','-t',str(TOTAL),'-movflags','+faststart',str(OUT/'__VID__.mp4')],capture_output=True,text=True)
 if r.returncode != 0:
     print('loudnorm 2-pase fallo, fallback 1-pase:', r.stderr[-200:])
-    subprocess.run(['ffmpeg','-y','-i',str(cap),'-i',str(mixw),'-filter_complex','[1:a]loudnorm=I=-14:TP=-1.5:LRA=11,afade=t=out:st=%.2f:d=1.2[a]' % (TOTAL-1.4),'-map','0:v:0','-map','[a]','-c:v','copy','-c:a','aac','-b:a','192k','-t',str(TOTAL),'-movflags','+faststart',str(OUT/'video-01.mp4')],check=True)
+    subprocess.run(['ffmpeg','-y','-i',str(cap),'-i',str(mixw),'-filter_complex','[1:a]loudnorm=I=-14:TP=-1.5:LRA=11,afade=t=out:st=%.2f:d=1.2[a]' % (TOTAL-1.4),'-map','0:v:0','-map','[a]','-c:v','copy','-c:a','aac','-b:a','192k','-t',str(TOTAL),'-movflags','+faststart',str(OUT/'__VID__.mp4')],check=True)
 print('video-01.mp4 listo ·', round(TOTAL,2), 's · voz + musica (sidechain) + loudnorm 2-pases + faststart')
 """)
 
 code("""
 import subprocess, json, re
-p=str(OUT/'video-01.mp4')
+p=str(OUT/'__VID__.mp4')
 info=json.loads(subprocess.run(['ffprobe','-v','error','-show_entries','stream=width,height,codec_type:format=duration','-of','json',p],capture_output=True,text=True).stdout)
 dur=float(info['format']['duration']); st={s['codec_type']:s for s in info['streams']}
 w,h=st['video']['width'],st['video']['height']; audio='audio' in st
@@ -462,7 +477,7 @@ qa={'res':f'{w}x{h}','dur':round(dur,2),'voz':round(V,2),'total':round(TOTAL,2),
 print(json.dumps(qa))
 # El veredicto también queda como fichero: se descarga en KB (no el mp4 de 15 MB)
 try:
-    Path('/kaggle/working/qa-video-01.json').write_text(json.dumps(qa, indent=1))
+    Path('/kaggle/working/qa-__VID__.json').write_text(json.dumps(qa, indent=1))
 except Exception as _e:
     pass
 assert ok, 'QA FAIL'
@@ -472,16 +487,37 @@ code("""
 # en Colab se descarga solo; en Kaggle lo copia al output del kernel
 try:
     from google.colab import files
-    files.download(str(OUT/'video-01.mp4'))
+    files.download(str(OUT/'__VID__.mp4'))
 except ImportError:
     import shutil
-    shutil.copy(str(OUT/'video-01.mp4'), '/kaggle/working/video-01.mp4')
+    shutil.copy(str(OUT/'__VID__.mp4'), '/kaggle/working/__VID__.mp4')
     print('video-01.mp4 copiado a /kaggle/working (output del kernel)')
 """)
 
 # inyecta la version real del spec en las celdas (sin strings hardcodeados que envejezcan)
 for _c in cells:
-    _c['source'] = [l.replace('__VERSION__', repr(_SPEC.get('version', 'v10'))) for l in _c['source']]
+    _rep = {'__VERSION__': repr(_SPEC.get('version', 'v10')),
+            '__PLAN__': repr(_PLAN),
+            '__ENDIMG__': str(_END_IMG),
+            '__VID__': _VID,
+            '__LINKTXT__': repr(_LINKTXT),
+            '__INTRO_T__': repr(_INTRO[1] if len(_INTRO) > 1 else '0 VULNERABILIDADES'),
+            '__INTRO_S1__': repr(_INTRO[2] if len(_INTRO) > 2 else ''),
+            '__INTRO_S2__': repr(_INTRO[3] if len(_INTRO) > 3 else ''),
+            '__INTRO_DUR__': repr(_INTRO_DUR),
+            '__END_T__': repr(_ENDTX[1] if len(_ENDTX) > 1 else ''),
+            '__END_S1__': repr(_ENDTX[2] if len(_ENDTX) > 2 else ''),
+            '__END_S2__': repr(_ENDTX[3] if len(_ENDTX) > 3 else ''),
+            '__LASTW__': repr(_SPEC['voice'].get('marks_lastw') or []),
+            '__EN__': repr([p['subs_en'].split() for p in _SPEC['phrases']]),
+            '__KW__': repr(tuple((_SPEC.get('subtitles') or {}).get('keywords') or _KW_DEF)),
+            '__PAL__': repr(_PAL_DEF)}
+    _out = []
+    for _l in _c['source']:
+        for _k, _v in _rep.items():
+            _l = _l.replace(_k, _v)
+        _out.append(_l)
+    _c['source'] = _out
 
 nb={"cells":cells,"metadata":{"colab":{"provenance":[]},"kernelspec":{"name":"python3","display_name":"Python 3"},"language_info":{"name":"python"}},"nbformat":4,"nbformat_minor":4}
 
