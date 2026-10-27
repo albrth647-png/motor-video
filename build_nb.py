@@ -188,7 +188,11 @@ def _norm(w):
 LASTW = __LASTW__
 bnd, _pos = [], 0
 for _lw in LASTW:
-    _f = next((i for i in range(_pos, len(words)) if _norm(words[i]['w'])==_lw), None)
+    # _norm en LOS DOS LADOS: la voz da 'también' y _norm lo deja en 'tambien';
+    # comparar contra el marcador crudo hacia fallar cualquier marcador con tilde
+    # (los del v10 eran todos ASCII y el bug estaba escondido).
+    _k = _norm(_lw)
+    _f = next((i for i in range(_pos, len(words)) if _norm(words[i]['w'])==_k), None)
     if _f is None:
         # pista para diagnosticar sin bajar 100 KB de log: que palabras hay por ahi
         raise SystemExit('no encontre el limite de frase %r · siguiente esperada entre %r y %r' % (
