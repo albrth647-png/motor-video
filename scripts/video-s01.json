@@ -1,0 +1,193 @@
+{
+ "id": "video-s01",
+ "title": "Video S01 · Caso 2 — sandbox: false (Beekeeper Studio 6.1.6)",
+ "version": "v1",
+ "status": {
+  "approved": false,
+  "date": "2026-10-26",
+  "verdict": "PENDIENTE de render + QA + visto bueno del operador.",
+  "look": "CONGELADO (SPEC v1.2/v1.4) con las tarjetas de evidencia del modo cards. 10 planos en ~29 s (~2,9 s por plano frente a ~3,3 s del v10): mas corto y mas denso que el #1 y el #2."
+ },
+ "format": {
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "max_duration_s": 30,
+  "video_codec": "h264",
+  "audio_codec": "aac",
+  "audio_bitrate": "192k",
+  "pixel_format": "yuv420p",
+  "loudnorm": "2-pases (analisis JSON -> pase lineal)",
+  "target_lufs": -14
+ },
+ "timing": {
+  "voice_s": 27.86,
+  "tail_s": 1.5,
+  "total_s": 29.36,
+  "shots": 10,
+  "phrases": 6,
+  "spans_s": [5.01, 4.19, 3.85, 5.24, 3.99, 5.58],
+  "note": "Medido EN LOCAL con edge-tts (es-AR-TomasNeural -12%): voz 27,864 s · 53 palabras · los 6 marcadores LASTW caen en el audio y en orden. TOTAL 29,36 s. Regla 25-30 s cumplida."
+ },
+ "source": {
+  "target": "Beekeeper Studio 6.1.6 (Linux amd64)",
+  "artifact": "beekeeper-studio_6.1.6_amd64.deb · 281.298.876 B · sha256 750e29237ae2bd488d69dd994ff1dc5691d3335f9abff9f6def4539bf1302b3c (= digest oficial)",
+  "evidence": "oferta/casos/beekeeper-6.1.6.md · ev_dc211c4b688597c1b42ce2c03ecfc675855a56de6a4985dd2950936a168a2cc2 · run 40365009151",
+  "disclaimer": "cifras reales de la ficha; ningun numero inventado; se declara lo que NO se pudo medir"
+ },
+ "voice": {
+  "engine": "edge-tts",
+  "voice_id": "es-AR-TomasNeural",
+  "rate": "-12%",
+  "words": 53,
+  "note": "La voz (voz.mp3) + words.json se generan EN CI y se suben al dataset motor-media. El kernel (Kaggle, sin internet) los consume.",
+  "marks_lastw": ["datos", "falso", "también", "auditable", "ejecutó", "perfil"]
+ },
+ "music": {
+  "engine": "procedural-numpy (en el runner)",
+  "seed": "fija",
+  "mix": "sidechain ducking bajo la voz",
+  "sidechain": "threshold=0.03:ratio=4:attack=25:release=350",
+  "bed_factor": "0.9*0.095",
+  "fade_out_s": 1.2
+ },
+ "subtitles": {
+  "language": "en",
+  "mode": "karaoke",
+  "format": "ass",
+  "font": "Poppins Bold",
+  "fontsize": 74,
+  "outline": 5,
+  "margin_v": 450,
+  "palette": ["0x8fe3cf", "0xff7a3a", "0x9aa4ff", "0x4ade80", "0xc9a0ff", "0x8fe3cf"],
+  "keywords": [
+   "STUDIO",
+   "PASSWORDS",
+   "SANDBOX",
+   "OFF",
+   "SOURCE",
+   "BYTES",
+   "VULNERABILITY",
+   "AUDITABLE",
+   "STATIC",
+   "EXECUTED",
+   "DECLARED",
+   "LINK",
+   "PROFILE"
+  ]
+ },
+ "images": {
+  "source": "repo (socialcore/assets/video-s01/shot49..58.jpg)",
+  "note": "Tarjetas de evidencia 1080x1920 generadas por scripts/gen_cards.py (PIL + Poppins Bold, determinista, sin IA). La copia al runner la hace motor-video-build.yml. Sistema de composicion: barra de marca 0-230 · eyebrow 288 · titular 344 · contenido 620-1220 · pie 1236 · zona libre del karaoke 1380-1470 (margin_v 450).",
+  "map": {
+   "49": "01-portada (fondo del intro: el ASS dibuja el gancho)",
+   "50": "02-por-que-importa (credenciales de produccion)",
+   "51": "03-fuente (WindowBuilder.ts, linea 57 resaltada)",
+   "52": "04-tres-fuentes (fuente / artefacto / bytes)",
+   "53": "05-procedencia (.deb 281 MB, sha256 = digest oficial)",
+   "54": "06-no-vuln (contextIsolation true + nodeIntegration false)",
+   "55": "07-endcard (fondo, sin texto: el ASS dibuja el CTA)",
+   "56": "08-que-significa (diagrama renderer vs sandbox del SO)",
+   "57": "09-limite (analisis estatico, no se ejecuto)",
+   "58": "10-ficha (evidence_id + run + fecha + replica)"
+  },
+  "mode": "cards",
+  "zoom": [1.04, 1.05, 1.045, 1.06]
+ },
+ "intro": {
+  "over": "shot49",
+  "texts": [
+   "AUDIT WITH PROOF",
+   "sandbox: false",
+   "Beekeeper Studio 6.1.6",
+   "confirmado en los bytes del binario"
+  ],
+  "dur_s": 2.55
+ },
+ "endcard": {
+  "over": "shot55",
+  "texts": [
+   "AUDIT WITH PROOF",
+   "¿TU APP ES ELECTRON?",
+   "Informe en 48 h · evidencia verificable",
+   "Ficha fechada 26-oct-2026 · derecho de réplica"
+  ],
+  "link_text": "LINK EN EL PERFIL",
+  "video_fade_out_s": 0.7,
+  "link_y": 1240
+ },
+ "plan": [
+  [49, 0, 0.55, "portada: el ASS dibuja sandbox: false encima (0-2,55 s)"],
+  [50, 0, 0.45, "lo que hay detras: credenciales de produccion"],
+  [51, 1, 1.0, "la linea 57 del fuente, resaltada"],
+  [52, 2, 0.55, "tres fuentes, el mismo resultado"],
+  [53, 2, 0.45, "el sha256 del .deb = digest oficial"],
+  [54, 3, 0.5, "no es una vulnerabilidad"],
+  [56, 3, 0.5, "que significa sandbox: false"],
+  [57, 4, 1.0, "limite: analisis estatico, no se ejecuto"],
+  [58, 5, 0.55, "evidencia verificable + fecha + replica"],
+  [55, 5, 0.45, "endcard: el ASS dibuja el CTA + LINK EN EL PERFIL"]
+ ],
+ "phrases": [
+  {
+   "n": 0,
+   "t": [0.1, 0.1],
+   "shots": [49, 50],
+   "voice_es": "Beekeeper Studio guarda las contraseñas de tus bases de datos.",
+   "subs_en": "Beekeeper Studio stores your database passwords."
+  },
+  {
+   "n": 1,
+   "t": [0.1, 0.1],
+   "shots": [51],
+   "voice_es": "Su ventana principal se crea con sandbox en falso.",
+   "subs_en": "Its main window is created with sandbox off."
+  },
+  {
+   "n": 2,
+   "t": [0.1, 0.1],
+   "shots": [52, 53],
+   "voice_es": "Lo dice la fuente; los bytes, también.",
+   "subs_en": "The source says it; the bytes too."
+  },
+  {
+   "n": 3,
+   "t": [0.1, 0.1],
+   "shots": [54, 56],
+   "voice_es": "No es una vulnerabilidad. Es una decisión auditable.",
+   "subs_en": "Not a vulnerability. It is an auditable decision."
+  },
+  {
+   "n": 4,
+   "t": [0.1, 0.1],
+   "shots": [57],
+   "voice_es": "El análisis es estático: no se ejecutó.",
+   "subs_en": "The analysis is static: the app was not executed."
+  },
+  {
+   "n": 5,
+   "t": [0.1, 0.1],
+   "shots": [58, 55],
+   "voice_es": "Lo que no se pudo saber, está declarado. Link en el perfil.",
+   "subs_en": "What could not be known is declared. Link in the profile."
+  }
+ ],
+ "qa": {
+  "checks": [
+   "1080x1920",
+   "dur == total ±0.5",
+   "h264+aac",
+   "faststart",
+   "LUFS en [-16,-13] (ebur128, ULTIMO match)",
+   "fotogramas revisados"
+  ]
+ },
+ "delivery": {
+  "path": null,
+  "bytes": null,
+  "md5": null,
+  "kaggle_kernel": "yurislay/motor-video-v2",
+  "where": "salida del kernel (Kaggle) — se baja SOLO el qa-video-s01.json; el mp4 se pide aparte"
+ },
+ "note": "Short 1 del caso Beekeeper Studio 6.1.6. Un hecho, tres fuentes verificadas, limite declarado. Todo el contenido sale de oferta/casos/beekeeper-6.1.6.md; ninguna tarjeta lleva texto de IA. El gancho no se repite: el intro dice el hecho (sandbox: false) y la tarjeta 50 dice lo que hay detras."
+}

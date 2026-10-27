@@ -35,7 +35,10 @@ _LINKY = int((_SPEC.get('endcard') or {}).get('link_y', 1300))
 _KW_DEF = ('34','MILLION','PACKAGES','VULNERABILITIES','ACTIVE','WINDOWS','DYNAMIC','VERIFIED',
            'HANDLERS','TWO','SENDER','VALIDATION','COULDN','92,468','UNKNOWNS','LIMITS',
            'EVIDENCE','AUDIT','ELECTRON','32.4.1')
+# La narrativa de color es del GUION, no del motor: el spec puede fijar su paleta por frase.
+# Sin clave `palette` -> la paleta del v10 (los notebooks del #1 se regeneran identicos).
 _PAL_DEF = ['0x8fe3cf','0x8fe3cf','0x4ade80','0xff7a3a','0x9aa4ff','0xc9a0ff','0x8fe3cf']
+_PAL = (_SPEC.get('subtitles') or {}).get('palette') or _PAL_DEF
 _VOICE = _SPEC['voice']['voice_id']
 _RATE = _SPEC['voice']['rate']
 _TEXT = ' '.join(p['voice_es'] for p in _SPEC['phrases'])
@@ -535,7 +538,7 @@ for _c in cells:
             '__LASTW__': repr(_SPEC['voice'].get('marks_lastw') or []),
             '__EN__': repr([p['subs_en'].split() for p in _SPEC['phrases']]),
             '__KW__': repr(tuple((_SPEC.get('subtitles') or {}).get('keywords') or _KW_DEF)),
-            '__PAL__': repr(_PAL_DEF)}
+            '__PAL__': repr(_PAL)}
     _out = []
     for _l in _c['source']:
         for _k, _v in _rep.items():
