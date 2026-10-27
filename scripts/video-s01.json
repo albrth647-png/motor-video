@@ -187,6 +187,8 @@
   "bytes": null,
   "md5": null,
   "kaggle_kernel": "yurislay/motor-video-v2",
+  "ci_run": "40490754268",
+  "qa": {"res": "1080x1920", "dur": 29.43, "lufs": -15.2, "faststart": true, "sync": true, "verdict": "PASS"},
   "where": "salida del kernel (Kaggle) — se baja SOLO el qa-video-s01.json; el mp4 se pide aparte"
  },
  "note": "Short 1 del caso Beekeeper Studio 6.1.6. Un hecho, tres fuentes verificadas, limite declarado. Todo el contenido sale de oferta/casos/beekeeper-6.1.6.md; ninguna tarjeta lleva texto de IA. El gancho no se repite: el intro dice el hecho (sandbox: false) y la tarjeta 50 dice lo que hay detras."
