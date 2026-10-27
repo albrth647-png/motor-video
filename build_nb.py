@@ -189,7 +189,10 @@ LASTW = __LASTW__
 bnd, _pos = [], 0
 for _lw in LASTW:
     _f = next((i for i in range(_pos, len(words)) if _norm(words[i]['w'])==_lw), None)
-    if _f is None: raise SystemExit('no encontre el limite de frase: '+_lw)
+    if _f is None:
+        # pista para diagnosticar sin bajar 100 KB de log: que palabras hay por ahi
+        raise SystemExit('no encontre el limite de frase %r · siguiente esperada entre %r y %r' % (
+            _lw, [w['w'] for w in words[_pos:_pos+6]], _norm(_lw)))
     bnd.append(_f); _pos = _f+1
 spans, _a = [], 0
 for _b in bnd:
@@ -549,7 +552,12 @@ for _c in cells:
 nb={"cells":cells,"metadata":{"colab":{"provenance":[]},"kernelspec":{"name":"python3","display_name":"Python 3"},"language_info":{"name":"python"}},"nbformat":4,"nbformat_minor":4}
 
 # render.ipynb (Colab, rutas /content) y kernel.ipynb (Kaggle, rutas /kaggle/working)
-src = json.dumps(nb, ensure_ascii=False, indent=1)
+# 🔴 ensure_ascii=True NO es estetica: el .ipynb viaja por el CLI de Kaggle, que en el runner
+#    lee el JSON con la codificacion del sistema y lo reescribe -> "también" llegaba al kernel
+#    como "tambiÃ©n" y el marcador de frase no se encontraba (run 40488865929, 2026-10-27).
+#    Con el JSON en ASCII puro (\u00b7, \u00e9) no hay bytes que se puedan malinterpretar.
+src = json.dumps(nb, ensure_ascii=True, indent=1)
+assert src.isascii(), 'el notebook lleva bytes no-ASCII: el CLI de Kaggle lo corromperia'
 # Rutas relativas al propio script: el mismo build_nb.py sirve en local y en CI.
 import os as _os
 _ENG = Path(_os.environ.get('ENGINE_DIR', _os.path.dirname(_os.path.abspath(__file__))))
