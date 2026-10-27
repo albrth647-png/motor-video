@@ -26,7 +26,12 @@ _LINKTXT = (_SPEC.get('endcard') or {}).get('link_text', 'LINK EN LA BIO')
 _PLAN = _SPEC.get('plan')
 _INTRO_DUR = (_SPEC.get('intro') or {}).get('dur_s')   # None = hasta el fin de la frase 0
 _IMGS = _SPEC.get('images') or {}
-_CARDS = _IMGS.get('mode') == 'cards'        # tarjetas 1080x1920 ya compuestas: sin ESRGAN ni regrado
+_ESCENAS = _SPEC.get('escenas') or []
+_REVEAL = bool(_ESCENAS)                     # modo reveal: pantalla fija + elementos por cue
+_REVEAL_SRC = (_ENGINE_DIR / 'scripts' / 'reveal.py').read_text(encoding='utf-8')
+# Se inyecta SIEMPRE (aunque el spec sea `cards`): la celda del kernel es la misma para
+# los dos modos y el validador de nombres no ve ramas muertas. En cards no se llama.
+_CARDS = _IMGS.get('mode') in ('cards', 'reveal')   # imagenes ya compuestas 1080x1920: sin ESRGAN
 _ZI = _IMGS.get('zoom') or [1.12, 1.16, 1.14, 1.18]
 _GRADE = '' if _CARDS else ',eq=contrast=1.05:saturation=1.10:brightness=0.004,vignette=PI/4.8'
 _FONT = ((_SPEC.get('subtitles') or {}).get('font') or 'Poppins').replace(' Bold', '')
@@ -46,10 +51,20 @@ print('spec:', _VOICE, _RATE, '·', len(_TEXT.split()), 'palabras ·', len(_SPEC
 
 _TITLE = _SPEC.get('title') or 'Video 01 v10'
 _NPLAN = len(_SPEC.get('plan') or [])
-_SUF = (' — %d planos' % _NPLAN) if _NPLAN else ' — 16 planos (plan por defecto)'
-_NPLAN_TXT = ('%d planos' % _NPLAN) if _NPLAN else '16 planos'
-_IMGTXT = ('tarjetas de evidencia 1080x1920 ya compuestas (modo cards: sin ESRGAN, sin regrado, zoom suave)'
+_NESC = len(_ESCENAS)
+_NEL = sum(len(s['elementos']) for s in _ESCENAS)
+_SUF = (' — %d planos' % _NPLAN) if _NPLAN else (
+    (' — %d escenas · %d elementos (revelado por voz)' % (_NESC, _NEL)) if _REVEAL
+    else ' — 16 planos (plan por defecto)')
+_NPLAN_TXT = ('%d planos' % _NPLAN) if _NPLAN else (
+    ('pantalla FIJA y %d elementos que entran cuando la voz dice su palabra (%d escenas, sin cortes de pantalla)' % (_NEL, _NESC))
+    if _REVEAL else '16 planos')
+_IMGTXT = ('fondo de marca fijo + elementos PNG transparentes (modo reveal: sin ESRGAN, sin cortes, fade alfa)'
+           if _REVEAL else
+           'tarjetas de evidencia 1080x1920 ya compuestas (modo cards: sin ESRGAN, sin regrado, zoom suave)'
            if _CARDS else 'imagenes IA (FLUX) -> 9:16 -> upscale x4')
+_PIPETXT = ('fondo FIJO (sin zoom ni cortes) + fade alfa de cada elemento' if _REVEAL
+            else 'Ken Burns sin temblor')
 md(f"""# motor-video · {_TITLE}{_SUF}
 
 **Las imagenes mandan**: cada plano ilustra lo que dice la voz en ese tramo.
@@ -59,7 +74,7 @@ Tipografia REAL en ASS (D-VM-04: la IA nunca dibuja texto) + animaciones ASS
 mezclado con sidechain bajo la voz + cola final con fade.
 Subtitulos **EN karaoke** palabra a palabra (el audio queda en espanol — SPEC D-VM-06).
 
-Pipeline: {_IMGTXT} -> Ken Burns sin temblor -> scrim + intro animada + subtitulos EN + endcard CTA ->
+Pipeline: {_IMGTXT} -> {_PIPETXT} -> scrim + intro animada + subtitulos EN + endcard CTA ->
 voz ({_VOICE} {_RATE}) + lecho procedural (numpy, sidechain) + cola con fade -> QA gate -> faststart. Sin GPU, sin internet, sin datos extra.
 """)
 
@@ -138,9 +153,12 @@ else:
       ( 8, 7, 0.60),  # boveda turquesa
       (11, 7, 0.60),  # fondo CTA
     ]
-_missing = [i for i,_s,_w in PLAN if not (IMGDIR/('shot%02d.jpg'%i)).exists()]
-if _missing: raise SystemExit('faltan imagenes del plan: %s' % _missing)
-print('PLAN OK ·', len(PLAN), 'planos para 8 frases')
+if __REVEAL__:
+    print('REVEAL · fondo fijo shot00.jpg + elementos el_*.png (sin planos)')
+else:
+    _missing = [i for i,_s,_w in PLAN if not (IMGDIR/('shot%02d.jpg'%i)).exists()]
+    if _missing: raise SystemExit('faltan imagenes del plan: %s' % _missing)
+    print('PLAN OK ·', len(PLAN), 'planos para 8 frases')
 
 VOZ = __VOZ__   # rioplatense (viene de scripts/video-01.json)
 TEXTO = __TEXTO__
@@ -210,20 +228,36 @@ for si in range(len(spans)):
     s1 = spans[si+1][0] if si+1 < len(spans) else V
     rng.append((s0, s1))
 
-# --- SHOTS: reparto del tramo de cada frase entre sus planos (por peso) ---
+# --- SHOTS (modo cards) o ELEMS (modo reveal): todo clavado a la voz real ---
+__REVEAL_PY__
+
 ZI = __ZI__
 SHOTS = []
-for si in range(len(spans)):
-    s0, s1 = rng[si]
-    grp = [(i, w) for i, s, w in PLAN if s == si]
-    WT = sum(w for _, w in grp); acc = s0
-    for j, (img, w) in enumerate(grp):
-        t1 = s0 + (s1 - s0) * sum(x[1] for x in grp[:j+1]) / WT
-        SHOTS.append((img, round(acc,3), round(t1,3), 'in' if len(SHOTS)%2==0 else 'out', ZI[len(SHOTS)%4]))
-        acc = t1
-_last = list(SHOTS[-1]); _last[2] = round(TOTAL, 3); SHOTS[-1] = tuple(_last)
-print('SHOTS:', len(SHOTS), 'planos · fin', SHOTS[-1][2], 's · duraciones', [round(t1-t0,2) for _,t0,t1,_,_ in SHOTS])
-for _s in SHOTS: print('  img%02d %5.2f-%5.2f %s' % (_s[0], _s[1], _s[2], _s[3]))
+ELEMS = []
+ESC_T = []
+T_E = TOTAL
+if __REVEAL__:
+    # La pantalla NO cambia: fondo fijo + elementos que entran cuando la voz dice su palabra.
+    _faltan = [e['id'] for s in __ESCENAS__ for e in s['elementos']
+               if not (IMGDIR / ('el_%s.png' % e['id'])).exists()]
+    if _faltan: raise SystemExit('faltan elementos PNG en el dataset: %s' % _faltan)
+    ELEMS, ESC_T, T_E = reveal_plan(words, __ESCENAS__, TOTAL)
+    print('REVEAL ·', len(ESC_T), 'escenas ·', len(ELEMS), 'elementos · endcard en', round(T_E, 2), 's')
+    for _e in ELEMS: print('  escena %-3s %-12s %6.2f-%6.2f s' % (_e[0], _e[1], _e[2], _e[3]))
+else:
+    for si in range(len(spans)):
+        s0, s1 = rng[si]
+        grp = [(i, w) for i, s, w in PLAN if s == si]
+        WT = sum(w for _, w in grp); acc = s0
+        for j, (img, w) in enumerate(grp):
+            t1 = s0 + (s1 - s0) * sum(x[1] for x in grp[:j+1]) / WT
+            SHOTS.append((img, round(acc,3), round(t1,3), 'in' if len(SHOTS)%2==0 else 'out', ZI[len(SHOTS)%4]))
+            acc = t1
+    _last = list(SHOTS[-1]); _last[2] = round(TOTAL, 3); SHOTS[-1] = tuple(_last)
+    print('SHOTS:', len(SHOTS), 'planos · fin', SHOTS[-1][2], 's · duraciones', [round(t1-t0,2) for _,t0,t1,_,_ in SHOTS])
+    for _s in SHOTS: print('  img%02d %5.2f-%5.2f %s' % (_s[0], _s[1], _s[2], _s[3]))
+    _ei0 = [i for i, s in enumerate(SHOTS) if s[0] == __ENDIMG__]
+    T_E = (SHOTS[_ei0[0]][1] + 0.15) if _ei0 else TOTAL
 
 # --- acento de color por tramo (narrativa rojo -> turquesa, alineada a las frases) ---
 _PAL = __PAL__
@@ -271,16 +305,15 @@ ev_fg.append(_d(0.80, _i_end, 'Sub', _grp('fad(320,240)','move(540,952,540,935,0
 ev_fg.append(_d(1.05, _i_end, 'Sub', _grp('fad(320,240)','move(540,1022,540,1005,0,380)') + __INTRO_S2__))
 _ei = [i for i, s in enumerate(SHOTS) if s[0] == __ENDIMG__]
 _t_link = next((w['t0'] for w in words if _norm(w['w']) == 'link'), None)
-if _ei:
-    t_e = SHOTS[_ei[0]][1] + 0.15
-    ev_bg.append(_d(t_e - 0.15, TOTAL, 'Scrim', _scrim('BA', 420, 320)))
-    ev_fg.append(_d(t_e + 0.20, TOTAL, 'Brand', _grp('fad(280,400)','move(540,668,540,640,0,420)') + 'AUDIT WITH PROOF'))
-    ev_fg.append(_d(t_e + 0.40, TOTAL, 'Title', _grp('fad(300,400)','pos(540,830)','fscx92','fscy92','t(0,460,'+BS+'fscx100'+BS+'fscy100)') + __END_T__))
-    ev_fg.append(_d(t_e + 0.65, TOTAL, 'Sub', _ov(__END_S1__, 990, 420, 400)))
-    ev_fg.append(_d(t_e + 0.85, TOTAL, 'Sub', _ov(__END_S2__, 1065, 420, 400)))
-    t0l = max(t_e + 0.25, (_t_link - 0.20) if _t_link is not None else t_e + 1.1)
-    ev_fg.append(_d(t0l - 0.15, TOTAL, 'Bar', _grp('p1','an5','pos(540,1300)','fad(160,420)','1c&H141414&','alpha&H28&','bord0','shad0') + 'm 0 0 l 520 0 l 520 112 l 0 112' + _grp('p0')))
-    ev_fg.append(_d(t0l, TOTAL, 'Link', _grp('fad(300,420)','pos(540,1300)','t(160,700,'+BS+'fscx108'+BS+'fscy108)') + __LINKTXT__))
+t_e = (SHOTS[_ei[0]][1] + 0.15) if _ei else T_E   # reveal: el endcard empieza con la placa (cue 'link')
+ev_bg.append(_d(t_e - 0.15, TOTAL, 'Scrim', _scrim('BA', 420, 320)))
+ev_fg.append(_d(t_e + 0.20, TOTAL, 'Brand', _grp('fad(280,400)','move(540,668,540,640,0,420)') + 'AUDIT WITH PROOF'))
+ev_fg.append(_d(t_e + 0.40, TOTAL, 'Title', _grp('fad(300,400)','pos(540,830)','fscx92','fscy92','t(0,460,'+BS+'fscx100'+BS+'fscy100)') + __END_T__))
+ev_fg.append(_d(t_e + 0.65, TOTAL, 'Sub', _ov(__END_S1__, 990, 420, 400)))
+ev_fg.append(_d(t_e + 0.85, TOTAL, 'Sub', _ov(__END_S2__, 1065, 420, 400)))
+t0l = max(t_e + 0.25, (_t_link - 0.20) if _t_link is not None else t_e + 1.1)
+ev_fg.append(_d(t0l - 0.15, TOTAL, 'Bar', _grp('p1','an5','pos(540,1300)','fad(160,420)','1c&H141414&','alpha&H28&','bord0','shad0') + 'm 0 0 l 520 0 l 520 112 l 0 112' + _grp('p0')))
+ev_fg.append(_d(t0l, TOTAL, 'Link', _grp('fad(300,420)','pos(540,1300)','t(160,700,'+BS+'fscx108'+BS+'fscy108)') + __LINKTXT__))
 ass_lines = ['[Script Info]', 'ScriptType: v4.00+', 'PlayResX: 1080', 'PlayResY: 1920',
  'WrapStyle: 2', 'ScaledBorderAndShadow: yes', '[V4+ Styles]',
  'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
@@ -307,7 +340,7 @@ code("""
 #   intro (pad suave) -> tension (Am-F-Dm-E) -> solucion (C-G-Am-F) -> cierre (C + fade).
 import numpy as np, wave as _wv
 _ei2 = [i for i, s in enumerate(SHOTS) if s[0] == __ENDIMG__]
-t_e = SHOTS[_ei2[0]][1] + 0.15
+t_e = (SHOTS[_ei2[0]][1] + 0.15) if _ei2 else T_E
 SRM = 44100
 NM = int(SRM * TOTAL)
 _mix = np.zeros(NM)
@@ -452,12 +485,16 @@ def shot(idx, ds, Z, mode, name):
     if r.returncode != 0: raise SystemExit('fallo plano %s: %s' % (name, r.stderr[-300:]))
     print('plano', name, 'img%02d'%idx, mode, ds, 's')
 
-for i,(idx,t0,t1,mode,Z) in enumerate(SHOTS):
-    shot(idx, round(t1-t0,3), Z, mode, '%02d'%i)
+if __REVEAL__:
+    # pantalla fija: fondo + overlays con fade alfa (la escena no cambia; se llena)
+    reveal_montage(OUT, 'shot00.jpg', ELEMS, ESC_T, img_dir=IMGDIR, fps=FPS, crf=19)
+else:
+    for i,(idx,t0,t1,mode,Z) in enumerate(SHOTS):
+        shot(idx, round(t1-t0,3), Z, mode, '%02d'%i)
 
-lst = OUT/'shots.txt'; lst.write_text(''.join("file '%s'\\n" % (OUT/('s_%02d.mp4'%i)) for i in range(len(SHOTS))))
-subprocess.run(['ffmpeg','-y','-f','concat','-safe','0','-i',str(lst),'-c','copy',str(OUT/'video.mp4')],check=True)
-print('montaje:', len(SHOTS), 'planos ->', round(sum(t1-t0 for _,t0,t1,_,_ in SHOTS),2), 's')
+    lst = OUT/'shots.txt'; lst.write_text(''.join("file '%s'\\n" % (OUT/('s_%02d.mp4'%i)) for i in range(len(SHOTS))))
+    subprocess.run(['ffmpeg','-y','-f','concat','-safe','0','-i',str(lst),'-c','copy',str(OUT/'video.mp4')],check=True)
+    print('montaje:', len(SHOTS), 'planos ->', round(sum(t1-t0 for _,t0,t1,_,_ in SHOTS),2), 's')
 """)
 
 code("""
@@ -487,7 +524,7 @@ r = subprocess.run(['ffmpeg','-y','-i',str(cap),'-i',str(mixw),'-filter_complex'
 if r.returncode != 0:
     print('loudnorm 2-pase fallo, fallback 1-pase:', r.stderr[-200:])
     subprocess.run(['ffmpeg','-y','-i',str(cap),'-i',str(mixw),'-filter_complex','[1:a]loudnorm=I=-14:TP=-1.5:LRA=11,afade=t=out:st=%.2f:d=1.2[a]' % (TOTAL-1.4),'-map','0:v:0','-map','[a]','-c:v','copy','-c:a','aac','-b:a','192k','-t',str(TOTAL),'-movflags','+faststart',str(OUT/'__VID__.mp4')],check=True)
-print('video-01.mp4 listo ·', round(TOTAL,2), 's · voz + musica (sidechain) + loudnorm 2-pases + faststart')
+print('__VID__.mp4 listo ·', round(TOTAL,2), 's · voz + musica (sidechain) + loudnorm 2-pases + faststart')
 """)
 
 code("""
@@ -501,7 +538,7 @@ sync=abs(dur - TOTAL) <= 0.5
 _ls = subprocess.run(['ffmpeg','-i',p,'-af','ebur128','-f','null','-'],capture_output=True,text=True).stderr
 _ms = re.findall(r'I:\\s+(-?[\\d.]+) LUFS', _ls); lufs = float(_ms[-1]) if _ms else None  # ultimo match = resumen ebur128 (los primeros son lineas de progreso)
 ok=(w,h)==(1080,1920) and dur<=60 and audio and faststart and sync and (lufs is not None) and (-16 <= lufs <= -13)
-qa={'res':f'{w}x{h}','dur':round(dur,2),'voz':round(V,2),'total':round(TOTAL,2),'lufs':lufs,'audio':audio,'faststart':faststart,'sync':sync,'QA':'PASS' if ok else 'FAIL','version':__VERSION__,'brand':'AUDIT WITH PROOF'}
+qa={'res':f'{w}x{h}','dur':round(dur,2),'voz':round(V,2),'total':round(TOTAL,2),'lufs':lufs,'audio':audio,'faststart':faststart,'sync':sync,'QA':'PASS' if ok else 'FAIL','version':__VERSION__,'brand':'AUDIT WITH PROOF','escenas':len(ESC_T),'elementos':len(ELEMS)}
 print(json.dumps(qa))
 # El veredicto también queda como fichero: se descarga en KB (no el mp4 de 15 MB)
 try:
@@ -519,7 +556,7 @@ try:
 except ImportError:
     import shutil
     shutil.copy(str(OUT/'__VID__.mp4'), '/kaggle/working/__VID__.mp4')
-    print('video-01.mp4 copiado a /kaggle/working (output del kernel)')
+    print('__VID__.mp4 copiado a /kaggle/working (output del kernel)')
 """)
 
 # inyecta la version real del spec en las celdas (sin strings hardcodeados que envejezcan)
@@ -545,7 +582,14 @@ for _c in cells:
             '__LASTW__': repr(_SPEC['voice'].get('marks_lastw') or []),
             '__EN__': repr([p['subs_en'].split() for p in _SPEC['phrases']]),
             '__KW__': repr(tuple((_SPEC.get('subtitles') or {}).get('keywords') or _KW_DEF)),
-            '__PAL__': repr(_PAL)}
+            '__PAL__': repr(_PAL),
+            '__REVEAL__': repr(bool(_REVEAL)),
+            '__REVEAL_PY__': _REVEAL_SRC,
+            '__ESCENAS__': repr([{'id': _s['id'],
+                                  'elementos': [{'id': _e['id'], 'cue': _e['cue'],
+                                                 'd': float(_e.get('d', 0.0))}
+                                                for _e in _s['elementos']]}
+                                 for _s in _ESCENAS])}
     _out = []
     for _l in _c['source']:
         for _k, _v in _rep.items():

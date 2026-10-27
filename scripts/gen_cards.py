@@ -412,19 +412,219 @@ CARDS = {
 }
 
 
+# --- modo REVEAL: un PNG transparente por elemento ------------------------------------
+# La pantalla NO cambia: shot00.jpg es el fondo fijo (rejilla + marca) de todo el vídeo y
+# cada el_<id>.png se superpone con fade cuando la voz dice su palabra (scripts/reveal.py).
+
+def _rgba(c, a=255):
+    """'0xRRGGBB' (spec) o '#RRGGBB' (paleta) -> tupla RGBA."""
+    if isinstance(c, tuple):
+        return c
+    h = str(c).strip()
+    h = h[2:] if h.lower().startswith("0x") else h.lstrip("#")
+    return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16), a)
+
+
+def icon(d, kind, x, y, s, col, a=255):
+    """Iconos geométricos (sin IA, D-VM-04): se dibujan con primitivas a 2x."""
+    c = _rgba(col, a)
+    S = SS
+    def rec(x0, y0, x1, y1, fill=None, outline=None, w=0, r=0):
+        if r:
+            d.rounded_rectangle([x0*S, y0*S, x1*S, y1*S], radius=r*S, fill=fill,
+                                outline=outline, width=int(w*S))
+        else:
+            d.rectangle([x0*S, y0*S, x1*S, y1*S], fill=fill, outline=outline, width=int(w*S))
+    def ell(x0, y0, x1, y1, fill=None, outline=None, w=0):
+        d.ellipse([x0*S, y0*S, x1*S, y1*S], fill=fill, outline=outline, width=int(w*S))
+    def lin(pts, fill=None, w=5):
+        d.line([(px*S, py*S) for px, py in pts], fill=fill, width=int(w*S), joint="curve")
+    if kind == "base":                       # cilindro de base de datos
+        rec(x, y + s*0.14, x + s, y + s*0.82, fill=c)
+        ell(x, y, x + s, y + s*0.30, fill=c)
+        ell(x, y + s*0.66, x + s, y + s*0.96, fill=c)
+        ell(x + s*0.10, y + s*0.74, x + s*0.90, y + s*0.88, fill=(0, 0, 0, 0))
+    elif kind == "llave":
+        ell(x, y, x + s*0.44, y + s*0.44, outline=c, w=9)
+        lin([(x + s*0.33, y + s*0.33), (x + s*0.96, y + s*0.96)], fill=c, w=9)
+        lin([(x + s*0.70, y + s*0.70), (x + s*0.86, y + s*0.54)], fill=c, w=9)
+        lin([(x + s*0.82, y + s*0.82), (x + s*0.98, y + s*0.66)], fill=c, w=9)
+    elif kind == "escudo":
+        d.polygon([(x*S, (y + s*0.10)*S), ((x + s)*S, (y + s*0.10)*S), ((x + s)*S, (y + s*0.52)*S),
+                   ((x + s*0.5)*S, (y + s)*S), (x*S, (y + s*0.52)*S)], fill=c)
+    elif kind == "alerta":
+        d.polygon([((x + s*0.5)*S, y*S), ((x + s)*S, (y + s)*S), (x*S, (y + s)*S)], fill=c)
+        rec(x + s*0.455, y + s*0.36, x + s*0.545, y + s*0.66, fill=(0, 0, 0, 0))
+        ell(x + s*0.44, y + s*0.72, x + s*0.56, y + s*0.84, fill=(0, 0, 0, 0))
+    elif kind == "codigo":
+        lin([(x + s*0.40, y + s*0.10), (x + s*0.06, y + s*0.50), (x + s*0.40, y + s*0.90)], fill=c, w=10)
+        lin([(x + s*0.60, y + s*0.10), (x + s*0.94, y + s*0.50), (x + s*0.60, y + s*0.90)], fill=c, w=10)
+
+
+def _el_eyebrow(im, d, e):
+    track(d, (e.get("x", 70), e.get("y", 300)), e["texto"].upper(), mono(e.get("size", 28)),
+          e.get("color", TURQ), tr=3.2)
+
+
+def _el_titulo(im, d, e):
+    size = int(e.get("size", 76)); x = e.get("x", 70); y = e.get("y", 356)
+    lh = float(e.get("lh", 1.14)); f = font(size); maxw = int(e.get("max_w", 960))
+    for linea in e["lineas"]:
+        cx = x
+        for run in linea:
+            txt(d, (cx, y), run[0], f, run[1])
+            cx += d.textlength(run[0], font=f) / SS
+        if cx - x > maxw:
+            print("  ⚠ titular demasiado ancho (%d px > %d): %s" % (cx - x, maxw, linea))
+        y += size * lh
+
+
+def _el_panel(im, d, e):
+    x, y, w, h = e["x"], e["y"], e["w"], e["h"]
+    rr(d, (x, y, x + w, y + h), int(e.get("r", 24)), fill=_rgba(e.get("fill", PANEL)),
+       outline=_rgba(e.get("color", LINE)), width=2)
+    if e.get("label"):
+        track(d, (x + 36, y + 32), e["label"].upper(), mono(25), e.get("color", TURQ), tr=3.0)
+
+
+def _el_chips(im, d, e):
+    x, y = e["x"], e["y"]; h = int(e.get("h", 64)); fs = int(e.get("size", 30))
+    pad = int(e.get("padx", 26)); gap = int(e.get("gap", 14)); maxw = int(e.get("max_w", 1012))
+    f = font(fs); cx = x
+    for it in e["items"]:
+        wpx = d.textlength(it, font=f) / SS + 2 * pad
+        if cx + wpx > maxw and cx > x:
+            cx = x; y += h + gap
+        rr(d, (cx, y, cx + wpx, y + h), h / 2, fill=_rgba(e.get("fill", "#12222E")),
+           outline=_rgba(e.get("color", TURQ)), width=2)
+        txt(d, (cx + pad, y + (h - fs * 1.36) / 2 + 2), it, f, e.get("color", TURQ))
+        cx += wpx + gap
+
+
+def _el_nota(im, d, e):
+    txt(d, (e["x"], e["y"]), e["texto"], font(int(e.get("size", 36))), e.get("color", DETAIL))
+
+
+def _el_fila(im, d, e):
+    x, y, w, h = e["x"], e["y"], e["w"], e["h"]; fs = int(e.get("size", 30))
+    rr(d, (x, y, x + w, y + h), 20, fill=_rgba(PANEL), outline=_rgba(LINE), width=2)
+    d.rectangle([x*SS, y*SS, (x + 7)*SS, (y + h)*SS], fill=_rgba(e.get("color", TURQ)))
+    track(d, (x + 36, y + 24), e["tag"].upper(), mono(24), e.get("color", TURQ), tr=2.8)
+    txt(d, (x + 36, y + 64), e["src"], mono(fs), SOFT)
+    txt(d, (x + w - 36, y + 54), e["val"], mono(fs), WHITE, anchor="ra")
+
+
+def _el_codigo(im, d, e):
+    x, y, w = e["x"], e["y"], e["w"]; n = len(e["lineas"])
+    rr(d, (x, y, x + w, y + 124 + n * 58), 24, fill=_rgba(PANEL), outline=_rgba(LINE), width=2)
+    txt(d, (x + 34, y + 30), e["path"], mono(24), TURQ)
+    d.rectangle([(x + 34)*SS, (y + 72)*SS, (x + w - 34)*SS, (y + 73)*SS], fill=_rgba(LINE))
+    yy = y + 96
+    for num, code in e["lineas"]:
+        txt(d, (x + 40, yy), num, mono(26), "#3F5566")
+        txt(d, (x + 112, yy), code, mono(26), SOFT)
+        yy += 58
+
+
+def _el_codigo_hot(im, d, e):
+    x, y, w = e["x"], e["y"], e["w"]; yy = y + 96 + int(e.get("linea", 0)) * 58
+    rr(d, (x + 18, yy - 8, x + w - 18, yy + 50), 12, fill=_rgba("#16283A"))
+    d.rectangle([(x + 18)*SS, (yy - 8)*SS, (x + 25)*SS, (yy + 50)*SS], fill=_rgba(e.get("color", ORANGE)))
+    txt(d, (x + 40, yy), e["num"], mono(26), e.get("color", ORANGE))
+    txt(d, (x + 112, yy), e["code"], mono(26), WHITE)
+
+
+def _el_pill(im, d, e):
+    pill(d, e.get("cx", W / 2), e["y"], e["texto"], e.get("color", TURQ),
+         fs=int(e.get("size", 34)), h=int(e.get("h", 86)), fill=_rgba(e.get("fill", "#0F2A2A")))
+
+
+def _el_item(im, d, e):
+    x, y = e["x"], e["y"]; c = e.get("color", ORANGE)
+    d.ellipse([x*SS, (y + 12)*SS, (x + 13)*SS, (y + 25)*SS], fill=_rgba(c))
+    txt(d, (x + 38, y), e["texto"], font(int(e.get("size", 40))), WHITE)
+
+
+def _el_tarjeta(im, d, e):
+    x, y, w, h = e["x"], e["y"], e["w"], e["h"]
+    rr(d, (x, y, x + w, y + h), 22, fill=_rgba(PANEL), outline=_rgba(e.get("color", LINE)), width=2)
+    txt(d, (x + 36, y + 22), e["titulo"], font(int(e.get("size", 40))), e.get("color", WHITE))
+    if e.get("sub"):
+        txt(d, (x + 36, y + 72), e["sub"], font(int(e.get("size2", 27))), DETAIL)
+
+
+def _el_placa(im, d, e):
+    im.paste(background(1.0).convert("RGBA"), (0, 0))
+    d2 = ImageDraw.Draw(im)
+    brandbar(im, d2)
+    d2.rectangle([92*SS, 1436*SS, (W - 92)*SS, 1438*SS], fill=_rgba("#1C3542"))
+
+
+def _el_marca(im, d, e):
+    icon(d, e.get("icono", "escudo"), e.get("x", 690), e.get("y", 1120), int(e.get("size", 260)),
+         e.get("color", TURQ), a=int(e.get("alpha", 40)))
+
+
+ELEMS = {
+    "eyebrow": _el_eyebrow, "titulo": _el_titulo, "panel": _el_panel, "chips": _el_chips,
+    "nota": _el_nota, "fila": _el_fila, "codigo": _el_codigo, "codigo_hot": _el_codigo_hot,
+    "pill": _el_pill, "item": _el_item, "tarjeta": _el_tarjeta, "placa": _el_placa,
+    "marca": _el_marca,
+}
+
+
+def render_reveal(spec, outdir):
+    """shot00.jpg (fondo fijo) + un el_<id>.png transparente por elemento."""
+    outdir = Path(outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
+    # el spec usa '0xRRGGBB' (como las tarjetas); PIL quiere '#RRGGBB'
+    for sc in spec["escenas"]:
+        for el in sc["elementos"]:
+            for k in ("color", "fill"):
+                if isinstance(el.get(k), str) and el[k].lower().startswith("0x"):
+                    el[k] = "#" + el[k][2:]
+            for ln in (el.get("lineas") or []):
+                for run in ln:
+                    if len(run) > 1 and isinstance(run[1], str) and run[1].lower().startswith("0x"):
+                        run[1] = "#" + run[1][2:]
+    im = background(0.72).convert("RGBA")
+    d = ImageDraw.Draw(im)
+    brandbar(im, d)
+    im.resize((W, H), Image.LANCZOS).convert("RGB").save(
+        outdir / "shot00.jpg", "JPEG", quality=94, optimize=True, subsampling=0)
+    print("· shot00.jpg (fondo fijo 1080x1920)")
+    n = 0
+    for sc in spec["escenas"]:
+        for el in sc["elementos"]:
+            fn = ELEMS.get(el["tipo"])
+            if fn is None:
+                raise SystemExit("tipo de elemento desconocido: %r (%s)" % (el["tipo"], el["id"]))
+            lienzo = Image.new("RGBA", (W*SS, H*SS), (0, 0, 0, 0))
+            fn(lienzo, ImageDraw.Draw(lienzo), el)
+            p = outdir / ("el_%s.png" % el["id"])
+            lienzo.resize((W, H), Image.LANCZOS).save(p, "PNG", optimize=True)
+            n += 1
+            print("  · %-16s %s" % (p.name, el["tipo"]))
+    print("· %d elementos + shot00.jpg en %s" % (n, outdir))
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--spec", default=str(_HERE / "video-s01.json"))
     ap.add_argument("--out", required=True)
-    ap.add_argument("--solo", nargs="*", type=int, help="solo estas tarjetas")
+    ap.add_argument("--solo", nargs="*", type=int, help="solo estas tarjetas (modo cards)")
     a = ap.parse_args()
     outdir = Path(a.out)
     outdir.mkdir(parents=True, exist_ok=True)
 
+    sp = json.loads(Path(a.spec).read_text(encoding="utf-8")) if Path(a.spec).exists() else {}
+    if (sp.get("images") or {}).get("mode") == "reveal":
+        render_reveal(sp, outdir)
+        return 0
+
     if a.solo:
         usadas = a.solo
-    elif Path(a.spec).exists():
-        sp = json.loads(Path(a.spec).read_text(encoding="utf-8"))
+    elif sp:
         usadas = sorted({int(p[0]) for p in (sp.get("plan") or [])})
     else:
         usadas = sorted(CARDS)
