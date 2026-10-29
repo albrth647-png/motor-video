@@ -537,8 +537,10 @@ faststart=b'moov' in open(p,'rb').read(262144)
 sync=abs(dur - TOTAL) <= 0.5
 _ls = subprocess.run(['ffmpeg','-i',p,'-af','ebur128','-f','null','-'],capture_output=True,text=True).stderr
 _ms = re.findall(r'I:\\s+(-?[\\d.]+) LUFS', _ls); lufs = float(_ms[-1]) if _ms else None  # ultimo match = resumen ebur128 (los primeros son lineas de progreso)
-ok=(w,h)==(1080,1920) and dur<=60 and audio and faststart and sync and (lufs is not None) and (-16 <= lufs <= -13)
-qa={'res':f'{w}x{h}','dur':round(dur,2),'voz':round(V,2),'total':round(TOTAL,2),'lufs':lufs,'audio':audio,'faststart':faststart,'sync':sync,'QA':'PASS' if ok else 'FAIL','version':__VERSION__,'brand':'AUDIT WITH PROOF','escenas':len(ESC_T),'elementos':len(ELEMS)}
+# La duracion maxima NO es un 60 fijo: sale del spec (format.max_duration_s).
+# Sin esto, un short de 30 s podia pasar con 32,6 s y la regla de la serie se rompia en silencio.
+ok=(w,h)==(1080,1920) and dur<=__MAXDUR__ and audio and faststart and sync and (lufs is not None) and (-16 <= lufs <= -13)
+qa={'res':f'{w}x{h}','dur':round(dur,2),'max_dur':__MAXDUR__,'voz':round(V,2),'total':round(TOTAL,2),'lufs':lufs,'audio':audio,'faststart':faststart,'sync':sync,'QA':'PASS' if ok else 'FAIL','version':__VERSION__,'brand':'AUDIT WITH PROOF','escenas':len(ESC_T),'elementos':len(ELEMS)}
 print(json.dumps(qa))
 # El veredicto también queda como fichero: se descarga en KB (no el mp4 de 15 MB)
 try:
@@ -562,6 +564,7 @@ except ImportError:
 # inyecta la version real del spec en las celdas (sin strings hardcodeados que envejezcan)
 for _c in cells:
     _rep = {'__VERSION__': repr(_SPEC.get('version', 'v10')),
+            '__MAXDUR__': repr(float((_SPEC.get('format') or {}).get('max_duration_s') or 60)),
             '__PLAN__': repr(_PLAN),
             '__ENDIMG__': str(_END_IMG),
             '__VID__': _VID,

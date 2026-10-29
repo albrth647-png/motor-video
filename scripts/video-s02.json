@@ -5,7 +5,7 @@
  "status": {
   "approved": false,
   "date": "2026-10-29",
-  "verdict": "Copia de la plantilla S01b (modo reveal, SPEC v1.6). Mismo look, misma voz y misma estructura. Mejora declarada frente al S01b: 26 elementos (vs 28) y máximo 2 elementos por cue (el S01b llegaba a 3).",
+  "verdict": "Copia de la plantilla S01b (modo reveal, SPEC v1.6). Mismo look, misma voz y misma estructura. Mejora declarada frente al S01b: 25 elementos (vs 28), máximo 2 elementos por cue (el S01b llegaba a 3) y guion recortado para entrar en los 25-30 s.",
   "look": "Mismo sistema de composición que el S01b: barra de marca 0-230, eyebrow 288, titular 356, contenido 620-1220, karaoke con margin_v 450. La pantalla no cambia; los elementos entran con fade cuando la voz dice su palabra."
  },
  "format": {
@@ -21,11 +21,11 @@
   "target_lufs": -14
  },
  "timing": {
-  "voice_s": 28.4,
+  "voice_s": 27.4,
   "tail_s": 1.5,
-  "total_s": 29.9,
+  "total_s": 28.9,
   "escenas": 6,
-  "elementos": 26,
+  "elementos": 25,
   "phrases": 7,
   "note": "La voz y words.json los genera gen_voice.py en CI (edge-tts es-AR-TomasNeural -12%). Los tiempos de cada elemento NO estan escritos a mano: se resuelven del words.json real por la palabra del campo cue."
  },
@@ -39,7 +39,7 @@
   "engine": "edge-tts",
   "voice_id": "es-AR-TomasNeural",
   "rate": "-12%",
-  "words": 59,
+  "words": 52,
   "note": "Misma voz y mismo texto que el guion del dia 2 (publicacion/serie-caso-02/dias/d02.json).",
   "marks_lastw": ["encendido", "principal", "directa", "superficie", "dinámico", "perfil"]
  },
@@ -95,15 +95,15 @@
   "link_y": 1240
  },
  "phrases": [
-  {"n": 0, "voice_es": "El módulo remote vuelve a estar encendido en Beekeeper Studio 6.1.6.",
-   "subs_en": "The remote module is enabled again in Beekeeper Studio 6.1.6."},
+  {"n": 0, "voice_es": "El módulo remote vuelve a estar encendido en Beekeeper 6.1.6.",
+   "subs_en": "The remote module is enabled again in Beekeeper 6.1.6."},
   {"n": 1, "voice_es": "La línea 75 de WindowBuilder lo activa para la ventana principal.",
    "subs_en": "Line 75 of WindowBuilder turns it on for the main window."},
-  {"n": 2, "voice_es": "El paquete 2.1.3 es dependencia directa.",
-   "subs_en": "Package 2.1.3 is a direct dependency."},
+  {"n": 2, "voice_es": "El paquete 2.1.3, dependencia directa.",
+   "subs_en": "Package 2.1.3, a direct dependency."},
   {"n": 3, "voice_es": "No es un fallo: es superficie.",
    "subs_en": "Not a bug: it is attack surface."},
-  {"n": 4, "voice_es": "Lo que no se sabe es qué APIs llegan al renderer, porque el preload es dinámico.",
+  {"n": 4, "voice_es": "No se sabe qué APIs llegan al renderer: el preload es dinámico.",
    "subs_en": "What is unknown is which APIs reach the renderer: the preload is dynamic."},
   {"n": 5, "voice_es": "Ese límite está declarado.",
    "subs_en": "That limit is declared."},
@@ -125,9 +125,7 @@
      "src": "@electron/remote", "val": "2.1.3", "color": "0x8fe3cf"},
     {"id": "A5", "tipo": "fila", "cue": "beekeeper", "d": 0.04,
      "x": 60, "y": 862, "w": 960, "h": 132, "tag": "ESTADO",
-     "src": "ventana principal", "val": "habilitado", "color": "0xff7a3a"},
-    {"id": "A6", "tipo": "nota", "cue": "studio", "d": 0.04,
-     "x": 96, "y": 1024, "texto": "dependencia directa del proyecto", "color": "0xff7a3a"}
+     "src": "ventana principal", "val": "habilitado", "color": "0xff7a3a"}
    ]
   },
   {
