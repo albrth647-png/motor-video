@@ -1,0 +1,206 @@
+{
+ "id": "video-s02",
+ "title": "Video S02 · Caso 2 — el módulo remote vuelve a estar encendido (Beekeeper Studio 6.1.6)",
+ "version": "v1-reveal-s02",
+ "status": {
+  "approved": false,
+  "date": "2026-10-29",
+  "verdict": "Copia de la plantilla S01b (modo reveal, SPEC v1.6). Mismo look, misma voz y misma estructura. Mejora declarada frente al S01b: 26 elementos (vs 28) y máximo 2 elementos por cue (el S01b llegaba a 3).",
+  "look": "Mismo sistema de composición que el S01b: barra de marca 0-230, eyebrow 288, titular 356, contenido 620-1220, karaoke con margin_v 450. La pantalla no cambia; los elementos entran con fade cuando la voz dice su palabra."
+ },
+ "format": {
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "max_duration_s": 30,
+  "video_codec": "h264",
+  "audio_codec": "aac",
+  "audio_bitrate": "192k",
+  "pixel_format": "yuv420p",
+  "loudnorm": "2-pases (analisis JSON -> pase lineal)",
+  "target_lufs": -14
+ },
+ "timing": {
+  "voice_s": 28.4,
+  "tail_s": 1.5,
+  "total_s": 29.9,
+  "escenas": 6,
+  "elementos": 26,
+  "phrases": 7,
+  "note": "La voz y words.json los genera gen_voice.py en CI (edge-tts es-AR-TomasNeural -12%). Los tiempos de cada elemento NO estan escritos a mano: se resuelven del words.json real por la palabra del campo cue."
+ },
+ "source": {
+  "target": "Beekeeper Studio 6.1.6 (Linux amd64)",
+  "artifact": "beekeeper-studio_6.1.6_amd64.deb · 281.298.876 B · sha256 750e29237ae2bd488d69dd994ff1dc5691d3335f9abff9f6def4539bf1302b3c (= digest oficial)",
+  "evidence": "oferta/casos/beekeeper-6.1.6.md · ev_dc211c4b688597c1b42ce2c03ecfc675855a56de6a4985dd2950936a168a2cc2 · run 40365009151",
+  "disclaimer": "cifras reales de la ficha; ningun numero inventado; se declara lo que NO se pudo medir"
+ },
+ "voice": {
+  "engine": "edge-tts",
+  "voice_id": "es-AR-TomasNeural",
+  "rate": "-12%",
+  "words": 59,
+  "note": "Misma voz y mismo texto que el guion del dia 2 (publicacion/serie-caso-02/dias/d02.json).",
+  "marks_lastw": ["encendido", "principal", "directa", "superficie", "dinámico", "perfil"]
+ },
+ "music": {
+  "engine": "procedural-numpy (en el runner)",
+  "seed": "fija",
+  "mix": "sidechain ducking bajo la voz",
+  "sidechain": "threshold=0.03:ratio=4:attack=25:release=350",
+  "bed_factor": "0.9*0.095",
+  "fade_out_s": 1.2
+ },
+ "subtitles": {
+  "language": "en",
+  "mode": "karaoke",
+  "format": "ass",
+  "font": "Poppins Bold",
+  "fontsize": 74,
+  "outline": 5,
+  "margin_v": 450,
+  "palette": ["0x8fe3cf", "0xff7a3a", "0x9aa4ff", "0x4ade80", "0xc9a0ff", "0x8fe3cf", "0xff7a3a"],
+  "keywords": [
+   "REMOTE", "MODULE", "ENABLED", "STUDIO", "LINE", "WINDOW", "PACKAGE", "DIRECT",
+   "DEPENDENCY", "FAILURE", "SURFACE", "APIS", "RENDERER", "PRELOAD", "DYNAMIC",
+   "LIMIT", "DECLARED", "PROFILE", "LINK"
+  ]
+ },
+ "images": {
+  "mode": "reveal",
+  "source": "repo (socialcore/assets/video-s02: shot00.jpg + el_*.png)",
+  "note": "shot00.jpg = fondo de marca FIJO (degradado + focos + rejilla + barra de marca) para todo el video. Cada el_<id>.png es un elemento transparente 1080x1920 dibujado con PIL (sin IA, D-VM-04) por scripts/gen_cards.py. El motor los superpone con fade alfa en el instante de su palabra.",
+  "zoom": [1.0, 1.0, 1.0, 1.0]
+ },
+ "intro": {
+  "over": "shot00",
+  "texts": [
+   "AUDIT WITH PROOF",
+   "Beekeeper Studio",
+   "6.1.6 · el módulo remote",
+   "vuelve a estar encendido"
+  ],
+  "dur_s": 2.55
+ },
+ "endcard": {
+  "over": "shot00",
+  "texts": [
+   "AUDIT WITH PROOF",
+   "¿TU APP ES ELECTRON?",
+   "Informe en 48 h · evidencia verificable",
+   "Ficha fechada 26-oct-2026 · derecho de réplica"
+  ],
+  "link_text": "LINK EN EL PERFIL",
+  "video_fade_out_s": 0.7,
+  "link_y": 1240
+ },
+ "phrases": [
+  {"n": 0, "voice_es": "El módulo remote vuelve a estar encendido en Beekeeper Studio 6.1.6.",
+   "subs_en": "The remote module is enabled again in Beekeeper Studio 6.1.6."},
+  {"n": 1, "voice_es": "La línea 75 de WindowBuilder lo activa para la ventana principal.",
+   "subs_en": "Line 75 of WindowBuilder turns it on for the main window."},
+  {"n": 2, "voice_es": "El paquete 2.1.3 es dependencia directa.",
+   "subs_en": "Package 2.1.3 is a direct dependency."},
+  {"n": 3, "voice_es": "No es un fallo: es superficie.",
+   "subs_en": "Not a bug: it is attack surface."},
+  {"n": 4, "voice_es": "Lo que no se sabe es qué APIs llegan al renderer, porque el preload es dinámico.",
+   "subs_en": "What is unknown is which APIs reach the renderer: the preload is dynamic."},
+  {"n": 5, "voice_es": "Ese límite está declarado.",
+   "subs_en": "That limit is declared."},
+  {"n": 6, "voice_es": "La ficha, en el perfil.",
+   "subs_en": "The case file is on the profile."}
+ ],
+ "escenas": [
+  {
+   "id": "A",
+   "nota": "EL DATO — el módulo vuelve a estar encendido (frase 0)",
+   "elementos": [
+    {"id": "A1", "tipo": "eyebrow", "cue": "módulo", "texto": "EL DATO", "color": "0x8fe3cf"},
+    {"id": "A2", "tipo": "titulo", "cue": "remote", "d": 0.06, "y": 356, "size": 76,
+     "lineas": [[["El módulo", "0xFFFFFF"]], [["remote", "0x8fe3cf"]]]},
+    {"id": "A3", "tipo": "panel", "cue": "encendido", "d": 0.06,
+     "x": 60, "y": 620, "w": 960, "h": 470, "label": "PAQUETE", "color": "0x8fe3cf"},
+    {"id": "A4", "tipo": "fila", "cue": "encendido", "d": 0.18,
+     "x": 60, "y": 710, "w": 960, "h": 132, "tag": "DEPENDENCIA",
+     "src": "@electron/remote", "val": "2.1.3", "color": "0x8fe3cf"},
+    {"id": "A5", "tipo": "fila", "cue": "beekeeper", "d": 0.04,
+     "x": 60, "y": 862, "w": 960, "h": 132, "tag": "ESTADO",
+     "src": "ventana principal", "val": "habilitado", "color": "0xff7a3a"},
+    {"id": "A6", "tipo": "nota", "cue": "studio", "d": 0.04,
+     "x": 96, "y": 1024, "texto": "dependencia directa del proyecto", "color": "0xff7a3a"}
+   ]
+  },
+  {
+   "id": "B",
+   "nota": "LA CONFIGURACIÓN — las dos líneas del fuente (frase 1). Solo se dibujan las líneas verificadas en la ficha (:13 y :75), no un bloque inventado.",
+   "elementos": [
+    {"id": "B1", "tipo": "eyebrow", "cue": "línea", "texto": "LA CONFIGURACIÓN", "color": "0xff7a3a"},
+    {"id": "B2", "tipo": "titulo", "cue": "windowbuilder", "d": 0.06, "y": 356, "size": 76,
+     "lineas": [[["Dos líneas", "0xFFFFFF"]], [["en el fuente", "0xff7a3a"]]]},
+    {"id": "B3", "tipo": "fila", "cue": "windowbuilder", "d": 0.22,
+     "x": 60, "y": 660, "w": 960, "h": 132, "tag": "FUENTE",
+     "src": "WindowBuilder.ts:13", "val": "remote/main", "color": "0xff7a3a"},
+    {"id": "B4", "tipo": "fila", "cue": "activa", "d": 0.04,
+     "x": 60, "y": 812, "w": 960, "h": 132, "tag": "FUENTE",
+     "src": "WindowBuilder.ts:75", "val": "enable(webContents)", "color": "0xff7a3a"},
+    {"id": "B5", "tipo": "pill", "cue": "principal", "d": 0.06, "y": 1030,
+     "texto": "habilitado para la ventana principal", "color": "0xff7a3a", "fill": "#241A12"}
+   ]
+  },
+  {
+   "id": "C",
+   "nota": "EL PAQUETE — 2.1.3 es dependencia directa (frase 2)",
+   "elementos": [
+    {"id": "C1", "tipo": "eyebrow", "cue": "paquete", "texto": "EL PAQUETE", "color": "0x9aa4ff"},
+    {"id": "C2", "tipo": "titulo", "cue": "dependencia", "d": 0.06, "y": 356, "size": 76,
+     "lineas": [[["Dependencia", "0xFFFFFF"]], [["directa", "0x9aa4ff"]]]},
+    {"id": "C3", "tipo": "fila", "cue": "dependencia", "d": 0.20,
+     "x": 60, "y": 660, "w": 960, "h": 132, "tag": "SBOM",
+     "src": "@electron/remote", "val": "2.1.3", "color": "0x9aa4ff"},
+    {"id": "C4", "tipo": "nota", "cue": "directa", "d": 0.04,
+     "x": 96, "y": 830, "texto": "no llega de rebote: está declarada en el proyecto",
+     "color": "0xC9D6E2"}
+   ]
+  },
+  {
+   "id": "D",
+   "nota": "LA LECTURA — no es un fallo: es superficie (frase 3)",
+   "elementos": [
+    {"id": "D1", "tipo": "eyebrow", "cue": "no", "texto": "LA LECTURA CORRECTA", "color": "0x8fe3cf"},
+    {"id": "D2", "tipo": "titulo", "cue": "fallo", "d": 0.10, "y": 356, "size": 76,
+     "lineas": [[["No es un fallo:", "0xFFFFFF"]], [["es superficie", "0x8fe3cf"]]]},
+    {"id": "D3", "tipo": "panel", "cue": "fallo", "d": 0.16,
+     "x": 60, "y": 700, "w": 960, "h": 330, "label": "QUÉ PERMITE", "color": "0x8fe3cf"},
+    {"id": "D4", "tipo": "nota", "cue": "superficie", "d": 0.22,
+     "x": 96, "y": 800, "texto": "al renderer, alcanzar objetos del proceso main",
+     "color": "0xC9D6E2"},
+    {"id": "D5", "tipo": "pill", "cue": "superficie", "d": 0.44, "y": 1080,
+     "texto": "superficie conocida, no hallazgo", "color": "0x8fe3cf", "fill": "#0F2A2A"}
+   ]
+  },
+  {
+   "id": "E",
+   "nota": "EL LÍMITE — el preload es dinámico y eso se declara (frases 4 y 5)",
+   "elementos": [
+    {"id": "E1", "tipo": "eyebrow", "cue": "sabe", "texto": "EL LÍMITE DECLARADO", "color": "0xff7a3a"},
+    {"id": "E2", "tipo": "titulo", "cue": "apis", "d": 0.06, "y": 356, "size": 76,
+     "lineas": [[["Qué APIs llegan", "0xFFFFFF"]], [["al renderer", "0xff7a3a"]]]},
+    {"id": "E3", "tipo": "panel", "cue": "dinámico", "d": 0.06,
+     "x": 60, "y": 660, "w": 960, "h": 300, "label": "PRELOAD", "color": "0xff7a3a"},
+    {"id": "E4", "tipo": "nota", "cue": "dinámico", "d": 0.22,
+     "x": 96, "y": 756, "texto": "ruta dinámica · 0 entrypoints resueltos", "color": "0xC9D6E2"},
+    {"id": "E5", "tipo": "tarjeta", "cue": "declarado", "d": 0.06,
+     "x": 60, "y": 1000, "w": 960, "h": 120,
+     "titulo": "§6 · lo no medido, escrito", "sub": "declarado en la ficha, no supuesto",
+     "color": "0xff7a3a"}
+   ]
+  },
+  {
+   "id": "Z",
+   "nota": "ENDCARD — la placa tapa la escena y el ASS dibuja el CTA (cue 'perfil')",
+   "elementos": [
+    {"id": "Z0", "tipo": "placa", "cue": "perfil"}
+   ]
+  }
+ ]
+}
